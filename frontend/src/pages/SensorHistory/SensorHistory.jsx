@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Select, Table } from 'antd';
+import { Select, Table, message } from 'antd';
 import sensorApi from '../../services/sensorApi';
 import './SensorHistory.css';
 
@@ -32,7 +32,7 @@ export default function SensorHistory() {
       setTotal(payload.total || 0);
       setTotalPages(payload.totalPages || 1);
     } catch (error) {
-      console.error('Failed to fetch sensor data', error);
+      message.error(error.response?.data?.message || 'Lỗi khi tải dữ liệu cảm biến');
     }
   };
 
@@ -47,16 +47,16 @@ export default function SensorHistory() {
   };
 
   const formatValue = (type, value) => {
-    if (type === 'Nhiệt độ' || type === 'Temperature') return `${value} °C`;
-    if (type === 'Độ ẩm' || type === 'Humidity') return `${value} %`;
-    if (type === 'Ánh sáng' || type === 'Light') return `${value} lux`;
+    if (type === 'temperature') return `${value} °C`;
+    if (type === 'humidity') return `${value} %`;
+    if (type === 'light') return `${value} lux`;
     return value;
   };
 
   const getClassName = (type) => {
-    if (type === 'Nhiệt độ' || type === 'Temperature') return 'nhiet-do';
-    if (type === 'Độ ẩm' || type === 'Humidity') return 'do-am';
-    if (type === 'Ánh sáng' || type === 'Light') return 'anh-sang';
+    if (type === 'temperature') return 'nhiet-do';
+    if (type === 'humidity') return 'do-am';
+    if (type === 'light') return 'anh-sang';
     return '';
   };
 

@@ -1,19 +1,23 @@
 const SensorData = require('../models/sensorData');
 
-const getSensorDataService = async ({ startTime, endTime, time, sensorType, value }, page = 1, limit = 10) => {
+const getSensorDataService = async ({ time, sensorType, value }, page = 1, limit = 10) => {
   const query = {};
+  const exprConditions = [];
 
-  if (startTime || endTime) {
-    query.time = {};
-    if (startTime) query.time.$gte = new Date(startTime);
-    if (endTime) query.time.$lte = new Date(endTime);
-  } else if (time) {
-    const parsedTime = new Date(time);
-    if (!isNaN(parsedTime.getTime())) {
-      const nextDay = new Date(parsedTime);
-      nextDay.setDate(nextDay.getDate() + 1);
-      query.time = { $gte: parsedTime, $lt: nextDay };
-    }
+  if (time) {
+    exprConditions.push({
+      $regexMatch: {
+        input: {
+          $dateToString: {
+            format: "%d/%m/%Y %H:%M:%S",
+            date: "$time",
+            timezone: "Asia/Ho_Chi_Minh"
+          }
+        },
+        regex: time,
+        options: "i"
+      }
+    });
   }
 
   if (sensorType) {
@@ -21,7 +25,17 @@ const getSensorDataService = async ({ startTime, endTime, time, sensorType, valu
   }
 
   if (value) {
-    query.value = Number(value);
+    exprConditions.push({
+      $regexMatch: {
+        input: { $toString: "$value" },
+        regex: value,
+        options: "i"
+      }
+    });
+  }
+
+  if (exprConditions.length > 0) {
+    query.$expr = { $and: exprConditions };
   }
 
   const skip = (page - 1) * limit;
@@ -46,4 +60,6 @@ const getLatestSensorDataService = async () => {
   return data;
 };
 
-module.exports = { getSensorDataService, getLatestSensorDataService };
+module.exports = {
+  getSensorDataService, getLatestSensorDataService
+};

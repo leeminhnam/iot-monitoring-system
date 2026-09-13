@@ -4,12 +4,19 @@ const getActionHistoryService = async ({ time }, page = 1, limit = 10) => {
   const query = {};
 
   if (time) {
-    const parsedTime = new Date(time);
-    if (!isNaN(parsedTime.getTime())) {
-      const nextDay = new Date(parsedTime);
-      nextDay.setDate(nextDay.getDate() + 1);
-      query.time = { $gte: parsedTime, $lt: nextDay };
-    }
+    query.$expr = {
+      $regexMatch: {
+        input: {
+          $dateToString: {
+            format: "%d/%m/%Y %H:%M:%S",
+            date: "$time",
+            timezone: "Asia/Ho_Chi_Minh"
+          }
+        },
+        regex: time,
+        options: "i"
+      }
+    };
   }
 
   const skip = (page - 1) * limit;

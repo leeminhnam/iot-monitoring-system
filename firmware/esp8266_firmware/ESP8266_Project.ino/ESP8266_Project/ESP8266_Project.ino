@@ -15,8 +15,7 @@ const char* TOPIC_CONTROL  = "device_control";
 const char* TOPIC_RESPONSE = "device_response";
 
 // SENSOR
-#define DHT_PIN D1
-#define LM393_PIN A0
+#define DHT_PIN D4
 #define DHT_TYPE DHT11
 
 DHT dht(DHT_PIN, DHT_TYPE);
@@ -48,12 +47,10 @@ void setup() {
   Serial.println("ESP8266 START");
 
   setupSensors();
-
   setupLeds();
 
   // WiFi
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-
   Serial.print("Connecting WiFi");
 
   while (WiFi.status() != WL_CONNECTED) {
@@ -63,7 +60,6 @@ void setup() {
 
   Serial.println();
   Serial.println("WiFi connected");
-
   Serial.print("IP: ");
   Serial.println(WiFi.localIP());
 
@@ -75,24 +71,18 @@ void setup() {
 // MQTT RECONNECT
 void reconnectMQTT() {
   while (!mqttClient.connected()) {
-
     Serial.print("Connecting MQTT... ");
-
     String clientId = "ESP8266-";
     clientId += String(ESP.getChipId());
 
     if (mqttClient.connect(clientId.c_str())) {
       Serial.println("connected");
-
       mqttClient.subscribe(TOPIC_CONTROL);
-
       Serial.print("Subscribed: ");
       Serial.println(TOPIC_CONTROL);
-
     } else {
       Serial.print("failed, rc=");
       Serial.println(mqttClient.state());
-
       delay(2000);
     }
   }
@@ -103,10 +93,8 @@ void loop() {
   if (!mqttClient.connected()) {
     reconnectMQTT();
   }
-
   mqttClient.loop();
 
   readSensors();
-
   delay(2000);
 }

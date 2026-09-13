@@ -1,0 +1,175 @@
+import React, { useState, useEffect } from 'react';
+import { Table, message } from 'antd';
+import actionApi from '../../services/actionApi';
+import './ActionHistory.css';
+
+export default function ActionHistory() {
+  const [data, setData] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(5);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const [filters, setFilters] = useState({
+    time: ''
+  });
+
+  const fetchData = async () => {
+    try {
+      const params = {
+        page,
+        limit,
+        ...(filters.time && { time: filters.time })
+      };
+
+      const response = await actionApi.getActionHistory(params);
+      const payload = response.data;
+      setData(payload.data || []);
+      setTotal(payload.total || 0);
+      setTotalPages(payload.totalPages || 1);
+    } catch (error) {
+      message.error(error.response?.data?.message || 'Lỗi khi tải dữ liệu lịch sử thiết bị');
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [page, limit, filters]);
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({ ...prev, [name]: value }));
+    setPage(1);
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const pad = (n) => n.toString().padStart(2, '0');
+    return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  };
+
+  const getStatusConfig = (status) => {
+    const statusLower = status?.toLowerCase() || '';
+    if (statusLower === 'success') {
+      return { text: 'Thành công', color: '#10b981' };
+    }
+    if (statusLower === 'pending') {
+      return { text: 'Đang thực hiện', color: '#f59e0b' }; 
+    }
+    if (statusLower === 'failed') {
+      return { text: 'Thất bại', color: '#ef4444' };
+    }
+    return { text: status || 'Không rõ', color: '#8b92b2' };
+  };
+
+  const columns = [
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+    },
+    {
+      title: 'Thiết bị',
+      dataIndex: 'deviceId',
+      key: 'deviceId',
+      render: (device) => <span>{device?.name || 'Không rõ'}</span>,
+    },
+    {
+      title: 'Lệnh',
+      dataIndex: 'action',
+      key: 'action',
+    },
+    {
+      title: 'Trạng thái',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status) => {
+        const { text, color } = getStatusConfig(status);
+        return (
+          <div className="status-cell">
+            <span
+              className="status-dot"
+              style={{ backgroundColor: color }}
+            ></span>
+            <span style={{ color: color }}>{text}</span>
+          </div>
+        );
+      }
+    },
+    {
+      title: 'Thời gian',
+      dataIndex: 'time',
+      key: 'time',
+      render: (time) => formatDate(time),
+    },
+  ];
+
+  return (
+    <div className="action-history-container">
+      <div className="filters-row">
+        <div className="filter-group-left">
+          <input
+            type="text"
+            name="time"
+            placeholder="Nhập thời gian ..."
+            className="filter-input"
+            value={filters.time}
+            onChange={handleFilterChange}
+          />
+        </div>
+      </div>
+
+      <div className="data-table-container">
+        <Table
+          className="custom-ant-table"
+          columns={columns}
+          dataSource={data}
+          rowKey={(record) => record._id || record.id}
+          pagination={false}
+          locale={{ emptyText: 'Không có dữ liệu' }}
+        />
+
+        <div className="pagination-container">
+          <div className="page-info">
+            Trang {page} / {totalPages || 1}
+          </div>
+
+          <div className="pagination-controls">
+            <div className="items-per-page">
+              Hiển thị
+              <select
+                className="per-page-select"
+                value={limit}
+                onChange={(e) => {
+                  setLimit(Number(e.target.value));
+                  setPage(1);
+                }}
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+              </select>
+              dòng / trang
+            </div>
+
+            <button
+              className="btn-page btn-page-prev"
+              disabled={page === 1}
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+            >
+              Trước
+            </button>
+            <button
+              className="btn-page btn-page-next"
+              disabled={page >= totalPages}
+              onClick={() => setPage(p => p + 1)}
+            >
+              Sau
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

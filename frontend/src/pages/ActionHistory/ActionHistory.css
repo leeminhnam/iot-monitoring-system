@@ -1,0 +1,160 @@
+.action-history-container {
+  color: #fff;
+}
+
+.filters-row {
+  display: flex;
+  margin-bottom: 24px;
+}
+
+.filter-group-left {
+  width: 100%;
+  max-width: 300px; /* Adjust to match the width in image */
+}
+
+.filter-input {
+  background-color: #111421;
+  border: 1px solid #2d3043;
+  border-radius: 8px;
+  color: #fff;
+  padding: 10px 16px;
+  font-size: 14px;
+  outline: none;
+  height: 41px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.filter-input:focus {
+  border-color: #2d3043;
+  box-shadow: none;
+}
+
+.filter-input::placeholder {
+  color: #63677e;
+}
+
+.status-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* We reuse all the custom table styles since they share the same UI */
+.data-table-container {
+  background-color: #212330;
+  border-radius: 12px;
+  border: 1px solid #2d3043;
+  padding: 0;
+  overflow: hidden;
+}
+
+.custom-ant-table .ant-table {
+  background-color: transparent !important;
+  color: #fff !important;
+}
+
+.custom-ant-table .ant-table-thead > tr > th {
+  background-color: #272a3a !important;
+  color: #8b92b2 !important;
+  font-weight: 500 !important;
+  border-bottom: 1px solid #2d3043 !important;
+  padding: 16px 24px !important;
+}
+
+.custom-ant-table .ant-table-thead > tr > th:first-child {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+.custom-ant-table .ant-table-thead > tr > th:last-child {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.custom-ant-table .ant-table-thead > tr > th::before {
+  display: none !important;
+}
+
+.custom-ant-table .ant-table-tbody > tr > td {
+  border-bottom: 1px solid #2d3043 !important;
+  color: #fff !important;
+  padding: 16px 24px !important;
+}
+
+.custom-ant-table .ant-table-tbody > tr:last-child > td {
+  border-bottom: 1px solid #2d3043 !important;
+}
+
+.custom-ant-table .ant-table-hover > tr:hover > td,
+.custom-ant-table .ant-table-tbody > tr:hover > td {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+.custom-ant-table .ant-table-placeholder .ant-table-cell {
+  background-color: transparent !important;
+  border-bottom: 1px solid #2d3043 !important;
+  color: #8b92b2 !important;
+}
+
+.custom-ant-table .ant-empty-text {
+  color: #8b92b2 !important;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  margin-top: 0;
+  color: #8b92b2;
+  font-size: 14px;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.per-page-select {
+  background-color: #2d3043;
+  border: none;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  margin: 0 8px;
+  outline: none;
+}
+
+.btn-page {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-page-prev {
+  background-color: #2d3043;
+  color: #63677e;
+}
+
+.btn-page-next {
+  background-color: #00e5ff;
+  color: #000;
+  font-weight: 600;
+}
+
+.btn-page:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -6,6 +6,7 @@ import LoginPage from './pages/Login/LoginPage.jsx';
 import MainLayout from './components/layouts/MainLayout';
 import AccountPage from './pages/Account/AccountPage.jsx';
 import SensorHistory from './pages/SensorHistory/SensorHistory.jsx';
+import ActionHistory from './pages/ActionHistory/ActionHistory.jsx';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/" element={<div style={{ color: 'white' }}>Nội dung trang web</div>} />
           <Route path="/account" element={<AccountPage />} />
           <Route path="/sensors" element={<SensorHistory />} />
+          <Route path="/history" element={<ActionHistory />} />
         </Route>
 
         <Route>

@@ -21,6 +21,9 @@ app.use("/api/user", UserRoutes);
 const SensorRoutes = require("./routes/sensorRoutes");
 app.use("/api/sensors", SensorRoutes);
 
+const ActionRoutes = require("./routes/actionRoutes");
+app.use("/api/actions", ActionRoutes);
+
 const errorHandler = require("./middlewares/errorHandler");
 app.use(errorHandler);
 

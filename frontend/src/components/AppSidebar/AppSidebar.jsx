@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import {
   AppstoreOutlined,
   CompassOutlined,
@@ -9,11 +10,13 @@ import {
 import './AppSidebar.css';
 
 const AppSidebar = () => {
+  const location = useLocation();
+
   const menuItems = [
-    { id: 'overview', label: 'Tổng quan', icon: <AppstoreOutlined />, active: false },
-    { id: 'sensors', label: 'Cảm biến', icon: <CompassOutlined />, active: true },
-    { id: 'history', label: 'Lịch sử thiết bị', icon: <ClockCircleOutlined />, active: false },
-    { id: 'account', label: 'Tài khoản', icon: <UserOutlined />, active: false },
+    { id: 'overview', label: 'Tổng quan', icon: <AppstoreOutlined /> },
+    { id: 'sensors', label: 'Cảm biến', icon: <CompassOutlined /> },
+    { id: 'history', label: 'Lịch sử thiết bị', icon: <ClockCircleOutlined /> },
+    { id: 'account', label: 'Tài khoản', icon: <UserOutlined /> },
   ];
 
   return (
@@ -29,16 +32,21 @@ const AppSidebar = () => {
       </div>
 
       <nav className="sidebar-menu">
-        {menuItems.map((item) => (
-          <a
-            href={`/${item.id}`}
-            key={item.id}
-            className={`menu-item ${item.active ? 'active' : ''}`}
-          >
-            <span className="menu-icon">{item.icon}</span>
-            <span className="menu-label">{item.label}</span>
-          </a>
-        ))}
+        {menuItems.map((item) => {
+          const path = `/${item.id}`;
+          const isActive = location.pathname === path || (location.pathname === '/' && item.id === 'overview');
+
+          return (
+            <Link
+              to={path}
+              key={item.id}
+              className={`menu-item ${isActive ? 'active' : ''}`}
+            >
+              <span className="menu-icon">{item.icon}</span>
+              <span className="menu-label">{item.label}</span>
+            </Link>
+          );
+        })}
       </nav>
 
       <div className="sidebar-footer">

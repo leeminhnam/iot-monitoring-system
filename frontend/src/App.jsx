@@ -4,6 +4,7 @@ import ProtectedRoute from './components/ProtectedRoute/protectedRoute';
 import NotFoundPage from './pages/NotFound/NotFoundPage.jsx';
 import LoginPage from './pages/Login/LoginPage.jsx';
 import MainLayout from './components/layouts/MainLayout';
+import AccountPage from './pages/Account/AccountPage.jsx';
 
 function App() {
   return (
@@ -11,10 +12,7 @@ function App() {
       <Routes>
         <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
           <Route path="/" element={<div style={{ color: 'white' }}>Nội dung trang web</div>} />
-          {/* <Route path="/classes" element={<ClassList />} /> */}
-          {/* <Route path="/classes/:classId" element={<ClassDetail />} /> */}
-          {/* <Route path="/classes/:classId/sessions/:sessionId" element={<SessionDetail />} /> */}
-          {/* <Route path="/classes/:classId/sessions/:sessionId/camera" element={<SessionCameraPage />} /> */}
+          <Route path="/account" element={<AccountPage />} />
         </Route>
 
         <Route>

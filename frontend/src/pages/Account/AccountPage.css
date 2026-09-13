@@ -1,0 +1,170 @@
+.account-container {
+  display: flex;
+  gap: 24px;
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  max-width: 1200px;
+}
+
+.account-col-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 300px;
+}
+
+.account-col-right {
+  flex: 1.5;
+  display: flex;
+  flex-direction: column;
+  min-width: 400px;
+}
+
+.account-card {
+  background-color: #1a1c29;
+  border-radius: 12px;
+  padding: 32px;
+  border: 1px solid #2d3748;
+}
+
+/* Avatar Card */
+.avatar-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+.avatar-circle {
+  width: 100px;
+  height: 100px;
+  background-color: #00e5ff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  color: #1a1c29;
+  margin-bottom: 24px;
+}
+
+.avatar-name {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: #ffffff;
+}
+
+.avatar-school {
+  font-size: 14px;
+  color: #718096;
+  margin: 0;
+}
+
+/* Info Box */
+.info-box {
+  background-color: #1a1c29;
+  border-radius: 12px;
+  padding: 12px 20px;
+  border: 1px solid #2d3748;
+  display: flex;
+  flex-direction: column;
+}
+
+.info-label {
+  font-size: 11px;
+  color: #718096;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  letter-spacing: 0.5px;
+}
+
+.info-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* Links Card */
+.links-card {
+  padding: 32px;
+}
+
+.links-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 24px 0;
+  color: #ffffff;
+}
+
+.links-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.link-item {
+  display: flex;
+  align-items: center;
+  padding: 20px 24px;
+  background-color: #1e253c;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.link-item:hover {
+  background-color: #242c47;
+  border-color: rgba(0, 229, 255, 0.2);
+}
+
+.link-icon-wrapper {
+  width: 44px;
+  height: 44px;
+  background-color: #151823;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #00e5ff;
+  font-size: 22px;
+  margin-right: 16px;
+  border: 1px solid #2d3748;
+}
+
+.link-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.link-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.link-url {
+  font-size: 13px;
+  color: #00e5ff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 768px) {
+  .account-container {
+    flex-direction: column;
+  }
+
+  .account-col-right {
+    min-width: 100%;
+  }
+}

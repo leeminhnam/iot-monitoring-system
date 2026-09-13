@@ -3,20 +3,20 @@
 #include <DHT.h>
 
 // WIFI
-const char* WIFI_SSID = "your_wifi";
-const char* WIFI_PASSWORD = "your_password";
+const char* WIFI_SSID = "leeminhnam";
+const char* WIFI_PASSWORD = "leeminhnam";
 
 // MQTT
-const char* MQTT_SERVER = "your_ip_computer";
+const char* MQTT_SERVER = "10.106.124.117";
 const int MQTT_PORT = 1883;
 
 const char* TOPIC_SENSOR   = "sensor_data";
-const char* TOPIC_CONTROL  = "device_controll";
+const char* TOPIC_CONTROL  = "device_control";
 const char* TOPIC_RESPONSE = "device_response";
 
 // SENSOR
 #define DHT_PIN D1
-#define LM393_PIN D2
+#define LM393_PIN A0
 #define DHT_TYPE DHT11
 
 DHT dht(DHT_PIN, DHT_TYPE);

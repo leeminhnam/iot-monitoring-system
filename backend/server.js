@@ -15,6 +15,9 @@ app.use("/api/login", AuthRoutes);
 const { verifyToken } = require("./middlewares/verifyToken");
 app.use("/api", verifyToken);
 
+const UserRoutes = require("./routes/userRoutes");
+app.use("/api/user", UserRoutes);
+
 const errorHandler = require("./middlewares/errorHandler");
 app.use(errorHandler);
 

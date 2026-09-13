@@ -1,0 +1,198 @@
+import React, { useState, useEffect } from 'react';
+import { Select, Table } from 'antd';
+import sensorApi from '../../services/sensorApi';
+import './SensorHistory.css';
+
+export default function SensorHistory() {
+  const [data, setData] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(5);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const [filters, setFilters] = useState({
+    time: '',
+    sensorType: '',
+    value: ''
+  });
+
+  const fetchData = async () => {
+    try {
+      const params = {
+        page,
+        limit,
+        ...(filters.time && { time: filters.time }),
+        ...(filters.sensorType && { sensorType: filters.sensorType }),
+        ...(filters.value && { value: filters.value })
+      };
+
+      const response = await sensorApi.getSensorData(params);
+      const payload = response.data;
+      setData(payload.data || []);
+      setTotal(payload.total || 0);
+      setTotalPages(payload.totalPages || 1);
+    } catch (error) {
+      console.error('Failed to fetch sensor data', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [page, limit, filters]);
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({ ...prev, [name]: value }));
+    setPage(1); // Reset to first page on filter
+  };
+
+  const formatValue = (type, value) => {
+    if (type === 'Nhiệt độ' || type === 'Temperature') return `${value} °C`;
+    if (type === 'Độ ẩm' || type === 'Humidity') return `${value} %`;
+    if (type === 'Ánh sáng' || type === 'Light') return `${value} lux`;
+    return value;
+  };
+
+  const getClassName = (type) => {
+    if (type === 'Nhiệt độ' || type === 'Temperature') return 'nhiet-do';
+    if (type === 'Độ ẩm' || type === 'Humidity') return 'do-am';
+    if (type === 'Ánh sáng' || type === 'Light') return 'anh-sang';
+    return '';
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    const pad = (n) => n.toString().padStart(2, '0');
+    return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+  };
+
+  const columns = [
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+    },
+    {
+      title: 'Loại cảm biến',
+      dataIndex: 'sensorType',
+      key: 'sensorType',
+      render: (text) => <span className={`type-${getClassName(text)}`}>{text}</span>,
+    },
+    {
+      title: 'Giá trị',
+      dataIndex: 'value',
+      key: 'value',
+      render: (value, record) => (
+        <span className={`value-${getClassName(record.sensorType)}`}>
+          {formatValue(record.sensorType, value)}
+        </span>
+      ),
+    },
+    {
+      title: 'Thời gian',
+      dataIndex: 'time',
+      key: 'time',
+      render: (time) => formatDate(time),
+    },
+  ];
+
+  return (
+    <div className="sensor-history-container">
+      <div className="filters-row">
+        <div className="filter-group-left">
+          <input
+            type="text"
+            name="time"
+            placeholder="Nhập thời gian ..."
+            className="filter-input"
+            value={filters.time}
+            onChange={handleFilterChange}
+          />
+        </div>
+
+        <div className="filter-group-right">
+          <div className="combined-filter-box">
+            <Select
+              className="combined-ant-select"
+              placeholder="Chọn loại cảm biến"
+              value={filters.sensorType || undefined}
+              onChange={(value) => {
+                setFilters(prev => ({ ...prev, sensorType: value || '' }));
+                setPage(1);
+              }}
+              options={[
+                { value: 'temperature', label: 'Nhiệt độ' },
+                { value: 'humidity', label: 'Độ ẩm' },
+                { value: 'light', label: 'Ánh sáng' }
+              ]}
+              variant="borderless"
+            />
+
+            <div className="filter-divider"></div>
+
+            <input
+              type="text"
+              name="value"
+              placeholder="Giá trị cảm biến ...."
+              className="combined-filter-input"
+              value={filters.value}
+              onChange={handleFilterChange}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="data-table-container">
+        <Table
+          className="custom-ant-table"
+          columns={columns}
+          dataSource={data}
+          rowKey={(record) => record._id || record.id}
+          pagination={false}
+          locale={{ emptyText: 'Không có dữ liệu' }}
+        />
+
+        <div className="pagination-container">
+          <div className="page-info">
+            Trang {page} / {totalPages || 1}
+          </div>
+
+          <div className="pagination-controls">
+            <div className="items-per-page">
+              Hiển thị
+              <select
+                className="per-page-select"
+                value={limit}
+                onChange={(e) => {
+                  setLimit(Number(e.target.value));
+                  setPage(1);
+                }}
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+              </select>
+              dòng / trang
+            </div>
+
+            <button
+              className="btn-page btn-page-prev"
+              disabled={page === 1}
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+            >
+              Trước
+            </button>
+            <button
+              className="btn-page btn-page-next"
+              disabled={page >= totalPages}
+              onClick={() => setPage(p => p + 1)}
+            >
+              Sau
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -18,6 +18,9 @@ app.use("/api", verifyToken);
 const UserRoutes = require("./routes/userRoutes");
 app.use("/api/user", UserRoutes);
 
+const SensorRoutes = require("./routes/sensorRoutes");
+app.use("/api/sensors", SensorRoutes);
+
 const errorHandler = require("./middlewares/errorHandler");
 app.use(errorHandler);
 

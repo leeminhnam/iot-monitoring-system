@@ -1,0 +1,234 @@
+.sensor-history-container {
+  color: #fff;
+}
+
+.filters-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.filter-group-left {
+  flex: 1;
+  max-width: 300px;
+}
+
+.filter-group-left .filter-input {
+  width: 100%;
+}
+
+.filter-group-right {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.combined-filter-box {
+  display: flex;
+  align-items: center;
+  background-color: #111421;
+  border: 1px solid #2d3043;
+  border-radius: 8px;
+  height: 41px;
+  width: 100%;
+  max-width: 450px;
+}
+
+.combined-ant-select {
+  flex: 1;
+  min-width: 180px;
+}
+
+.combined-ant-select .ant-select-selector {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  height: 39px !important;
+  color: #fff !important;
+  display: flex;
+  align-items: center;
+}
+
+.combined-ant-select.ant-select-focused .ant-select-selector,
+.combined-ant-select.ant-select-open .ant-select-selector,
+.combined-ant-select:hover .ant-select-selector {
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.combined-ant-select .ant-select-selection-placeholder {
+  color: #63677e !important;
+  line-height: 39px !important;
+}
+
+.combined-ant-select .ant-select-selection-item {
+  line-height: 39px !important;
+}
+
+.combined-ant-select .ant-select-arrow {
+  color: #63677e !important;
+}
+
+.filter-divider {
+  width: 1px;
+  height: 24px;
+  background-color: #2d3043;
+}
+
+.combined-filter-input {
+  flex: 1.2;
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  padding: 10px 16px;
+  font-size: 14px;
+  outline: none;
+  height: 100%;
+}
+
+.combined-filter-input::placeholder {
+  color: #63677e;
+}
+
+.filter-input {
+  background-color: #111421;
+  border: 1px solid #2d3043;
+  border-radius: 8px;
+  color: #fff;
+  padding: 10px 16px;
+  font-size: 14px;
+  outline: none;
+  height: 41px;
+  box-sizing: border-box;
+}
+
+.filter-input:focus {
+  border-color: #2d3043;
+  box-shadow: none;
+}
+
+.filter-input::placeholder {
+  color: #63677e;
+}
+
+.data-table-container {
+  background-color: #212330;
+  border-radius: 12px;
+  border: 1px solid #2d3043; /* Add border to container */
+  padding: 0; /* Remove padding so header touches edges */
+  overflow: hidden; /* Clip header corners */
+}
+
+/* Ant Table Customization to match dark theme */
+.custom-ant-table .ant-table {
+  background-color: transparent !important;
+  color: #fff !important;
+}
+
+.custom-ant-table .ant-table-thead > tr > th {
+  background-color: #272a3a !important; /* Dark bluish-gray background */
+  color: #8b92b2 !important;
+  font-weight: 500 !important;
+  border-bottom: 1px solid #2d3043 !important; /* The image has a bottom border for header */
+  padding: 16px 24px !important; /* Adjust padding to match the height and spacing */
+}
+
+.custom-ant-table .ant-table-thead > tr > th:first-child {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+.custom-ant-table .ant-table-thead > tr > th:last-child {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.custom-ant-table .ant-table-thead > tr > th::before {
+  display: none !important;
+}
+
+.custom-ant-table .ant-table-tbody > tr > td {
+  border-bottom: 1px solid #2d3043 !important;
+  color: #fff !important;
+  padding: 16px 24px !important;
+}
+
+/* Force last row to have a border to separate from pagination */
+.custom-ant-table .ant-table-tbody > tr:last-child > td {
+  border-bottom: 1px solid #2d3043 !important;
+}
+
+.custom-ant-table .ant-table-hover > tr:hover > td,
+.custom-ant-table .ant-table-tbody > tr:hover > td {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+.custom-ant-table .ant-table-placeholder .ant-table-cell {
+  background-color: transparent !important;
+  border-bottom: 1px solid #2d3043 !important;
+  color: #8b92b2 !important;
+}
+
+.custom-ant-table .ant-empty-text {
+  color: #8b92b2 !important;
+}
+
+/* Colors for Sensor Types and Values */
+.type-nhiet-do, .value-nhiet-do,
+.type-do-am, .value-do-am,
+.type-anh-sang, .value-anh-sang {
+  color: #ffa500; /* Orange color based on image */
+  font-weight: 500;
+}
+
+/* Pagination styles */
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px; /* Add padding here since container padding is removed */
+  margin-top: 0;
+  color: #8b92b2;
+  font-size: 14px;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.per-page-select {
+  background-color: #2d3043;
+  border: none;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  margin: 0 8px;
+  outline: none;
+}
+
+.btn-page {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-page-prev {
+  background-color: #2d3043;
+  color: #63677e;
+}
+
+.btn-page-next {
+  background-color: #00e5ff;
+  color: #000;
+  font-weight: 600;
+}
+
+.btn-page:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

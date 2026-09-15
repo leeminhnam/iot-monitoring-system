@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, Switch, Typography, message } from 'antd';
+import { Card, Row, Col, Switch, Typography, message, Spin } from 'antd';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { FireOutlined, CloudOutlined, BulbOutlined } from '@ant-design/icons';
 import { io } from 'socket.io-client';
@@ -10,6 +10,7 @@ import './Dashboard.css';
 const { Title, Text } = Typography;
 
 const Dashboard = () => {
+  const [loading, setLoading] = useState(true);
   const [currentData, setCurrentData] = useState({
     temperature: 0,
     humidity: 0,
@@ -25,13 +26,17 @@ const Dashboard = () => {
   }, [devices]);
 
   useEffect(() => {
-    axiosClient.get('/sensors/chart-data?limit=50').then(res => {
-      setChartData(res.data);
-    }).catch(err => console.error("Lỗi khi lấy dữ liệu biểu đồ:", err));
+    Promise.all([
+      axiosClient.get('/sensors/chart-data?limit=50').then(res => {
+        setChartData(res.data);
+      }).catch(err => console.error("Lỗi khi lấy dữ liệu biểu đồ:", err)),
 
-    axiosClient.get('/devices').then(res => {
-      setDevices(res.data);
-    }).catch(err => console.error("Lỗi khi lấy danh sách thiết bị:", err));
+      axiosClient.get('/devices').then(res => {
+        setDevices(res.data);
+      }).catch(err => console.error("Lỗi khi lấy danh sách thiết bị:", err))
+    ]).finally(() => {
+      setLoading(false);
+    });
 
     const socket = io('http://localhost:8080');
 
@@ -91,6 +96,14 @@ const Dashboard = () => {
         setDevices(prev => prev.map(d => d._id === deviceId ? { ...d, loading: false } : d));
       });
   };
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+        <Spin size="large" tip="Đang tải dữ liệu..." />
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard-container">

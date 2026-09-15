@@ -62,33 +62,36 @@ const getLatestSensorDataService = async () => {
 };
 
 const getChartDataService = async (limit = 50) => {
-  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-
-  const rawData = await SensorData.find({ time: { $gte: twentyFourHoursAgo } })
-    .sort({ time: 1 })
+  // Lấy (limit * 3) bản ghi mới nhất (vì mỗi lần update có 3 loại cảm biến)
+  const rawData = await SensorData.find()
+    .sort({ time: -1 })
+    .limit(limit * 3)
     .exec();
 
   const grouped = {};
   rawData.forEach(item => {
+    const timeKey = item.time.getTime(); // Group bằng exact millisecond
     const vnTime = new Date(item.time.getTime() + 7 * 60 * 60 * 1000);
-    const timeKey = vnTime.toISOString().substring(0, 16);
     const displayTime = vnTime.toISOString().substring(11, 16); // HH:mm
+
     if (!grouped[timeKey]) {
-      grouped[timeKey] = { time: displayTime, temperature: null, humidity: null, light: null };
+      grouped[timeKey] = { time: displayTime, temperature: null, humidity: null, light: null, timestamp: timeKey };
     }
     if (item.sensorType === "temperature") grouped[timeKey].temperature = item.value;
     else if (item.sensorType === "humidity") grouped[timeKey].humidity = item.value;
     else if (item.sensorType === "light") grouped[timeKey].light = item.value;
   });
 
-  let result = Object.values(grouped);
+  // Sort lại theo thời gian tăng dần để vẽ biểu đồ từ trái sang phải
+  const result = Object.values(grouped)
+    .sort((a, b) => a.timestamp - b.timestamp)
+    .map(item => {
+      delete item.timestamp;
+      return item;
+    });
 
-  if (result.length > limit) {
-    const step = Math.ceil(result.length / limit);
-    result = result.filter((_, index) => index % step === 0);
-  }
-
-  return result;
+  // Đảm bảo chỉ trả về tối đa `limit` phần tử mới nhất
+  return result.slice(-limit);
 };
 
 module.exports = {

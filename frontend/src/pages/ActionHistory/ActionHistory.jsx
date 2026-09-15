@@ -10,6 +10,7 @@ export default function ActionHistory() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
 
   const [filters, setFilters] = useState({
     time: ''
@@ -17,6 +18,7 @@ export default function ActionHistory() {
 
   const fetchData = async () => {
     try {
+      setLoading(true);
       const params = {
         page,
         limit,
@@ -30,6 +32,8 @@ export default function ActionHistory() {
       setTotalPages(payload.totalPages || 1);
     } catch (error) {
       message.error(error.response?.data?.message || 'Lỗi khi tải dữ liệu lịch sử thiết bị');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -152,6 +156,7 @@ export default function ActionHistory() {
           className="custom-ant-table"
           columns={columns}
           dataSource={data}
+          loading={loading}
           rowKey={(record) => record._id || record.id}
           pagination={false}
           locale={{ emptyText: 'Không có dữ liệu' }}

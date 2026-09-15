@@ -21,9 +21,12 @@ const sensorDataSchema = new mongoose.Schema({
   },
   time: {
     type: Date,
-    default: Date.now
+    default: Date.now,
+    index: true
   }
 });
+
+sensorDataSchema.index({ time: -1 });
 
 const SensorData = mongoose.model('SensorData', sensorDataSchema);
 

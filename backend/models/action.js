@@ -26,9 +26,12 @@ const actionSchema = new mongoose.Schema({
   },
   time: {
     type: Date,
-    default: Date.now
+    default: Date.now,
+    index: true
   }
 });
+
+actionSchema.index({ deviceId: 1, time: -1 });
 
 const Action = mongoose.model('Action', actionSchema);
 

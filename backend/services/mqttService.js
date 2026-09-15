@@ -39,7 +39,7 @@ const initMqtt = async () => {
   });
 
   client.on("connect", () => {
-    console.log("Connected to MQTT Broker at", mqttServer);
+    console.log("Đã kết nối tới MQTT Broker tại", mqttServer);
     client.subscribe(TOPIC_SENSOR);
     client.subscribe(TOPIC_RESPONSE);
   });
@@ -85,7 +85,7 @@ const initMqtt = async () => {
         }
       }
       else if (topic === TOPIC_RESPONSE) {
-        console.log("Device response:", data);
+        console.log("Phản hồi từ thiết bị:", data);
 
         const devices = await Device.find();
         for (let dev of devices) {
@@ -153,7 +153,7 @@ const initMqtt = async () => {
         }
       }
     } catch (err) {
-      console.error("Error processing MQTT message on topic", topic, ":", err.message);
+      console.error("Lỗi khi xử lý tin nhắn MQTT trên topic", topic, ":", err.message);
     }
   });
 };
@@ -162,9 +162,9 @@ const publishControl = (payloadObj) => {
   if (client && client.connected) {
     const payload = JSON.stringify(payloadObj);
     client.publish(TOPIC_CONTROL, payload);
-    console.log("Published to device_control:", payload);
+    console.log("Đã gửi đến device_control:", payload);
   } else {
-    console.warn("MQTT client not connected, cannot publish");
+    console.warn("Client MQTT chưa kết nối, không thể gửi");
   }
 };
 

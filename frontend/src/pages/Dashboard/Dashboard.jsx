@@ -27,11 +27,11 @@ const Dashboard = () => {
   useEffect(() => {
     axiosClient.get('/sensors/chart-data?limit=50').then(res => {
       setChartData(res.data);
-    }).catch(err => console.error("Error fetching chart data:", err));
+    }).catch(err => console.error("Lỗi khi lấy dữ liệu biểu đồ:", err));
 
     axiosClient.get('/devices').then(res => {
       setDevices(res.data);
-    }).catch(err => console.error("Error fetching devices:", err));
+    }).catch(err => console.error("Lỗi khi lấy danh sách thiết bị:", err));
 
     const socket = io('http://localhost:8080');
 

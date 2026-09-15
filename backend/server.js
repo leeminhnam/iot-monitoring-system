@@ -42,12 +42,12 @@ app.use(errorHandler);
 
 mongoose.connect(process.env.DB_URL)
     .then(() => {
-        console.log("Successfully connected to MongoDB Atlas!");
+        console.log("Đã kết nối thành công tới MongoDB Atlas!");
 
         server.listen(8080, () => {
-            console.log("Server listening on port 8080");
+            console.log("Server đang lắng nghe trên cổng 8080");
         });
     })
     .catch((error) => {
-        console.error("MongoDB connection error:", error);
+        console.error("Lỗi kết nối MongoDB:", error);
     });

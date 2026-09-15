@@ -154,7 +154,7 @@ const Dashboard = () => {
             bordered={false}
             title={<Text style={{color: '#fff', fontSize: '16px'}}>Đồ thị cảm biến (Thời gian thực)</Text>}
           >
-            <div style={{ width: '100%', height: 300 }}>
+            <div style={{ width: '100%', height: 250 }}>
               <ResponsiveContainer>
                 <LineChart data={chartData} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#2c2e3e" vertical={false} />

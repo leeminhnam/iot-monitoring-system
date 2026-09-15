@@ -46,7 +46,6 @@ const toggleDeviceService = async (deviceId, action, userId) => {
   });
   await newAction.save();
 
-  // Emit action_update cho frontend
   const io = getIo();
   if (io) {
     const populatedAction = await Action.findById(newAction._id).populate('deviceId', 'name');
@@ -69,6 +68,24 @@ const toggleDeviceService = async (deviceId, action, userId) => {
   }
 
   publishControl(controlPayload);
+
+  setTimeout(async () => {
+    try {
+      const checkAction = await Action.findById(newAction._id);
+      if (checkAction && checkAction.status === 'pending') {
+        checkAction.status = 'failed';
+        await checkAction.save();
+
+        const io = getIo();
+        if (io) {
+          const populatedFailedAction = await Action.findById(newAction._id).populate('deviceId', 'name');
+          io.emit("action_update", populatedFailedAction);
+        }
+      }
+    } catch (error) {
+      console.error("Lỗi khi kiểm tra timeout action:", error);
+    }
+  }, 5000);
 
   return newAction;
 };

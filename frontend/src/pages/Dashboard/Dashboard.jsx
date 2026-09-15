@@ -89,6 +89,16 @@ const Dashboard = () => {
     const action = checked ? "turn_on" : "turn_off";
     axiosClient.post(`/devices/${deviceId}/toggle`, { action })
       .then(res => {
+        setTimeout(() => {
+          const currentDevices = devicesRef.current;
+          const targetDevice = currentDevices.find(d => d._id === deviceId);
+
+          if (targetDevice && targetDevice.loading) {
+            const deviceName = targetDevice.name || 'Thiết bị';
+            message.error(`Không nhận được phản hồi từ ${deviceName} sau 5 giây`);
+            setDevices(prev => prev.map(d => d._id === deviceId ? { ...d, loading: false } : d));
+          }
+        }, 5000);
       })
       .catch(err => {
         console.error("Lỗi khi điều khiển thiết bị:", err);

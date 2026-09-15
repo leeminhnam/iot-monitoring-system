@@ -13,10 +13,10 @@ const AppSidebar = () => {
   const location = useLocation();
 
   const menuItems = [
-    { id: 'overview', label: 'Tổng quan', icon: <AppstoreOutlined /> },
-    { id: 'sensors', label: 'Cảm biến', icon: <CompassOutlined /> },
-    { id: 'history', label: 'Lịch sử thiết bị', icon: <ClockCircleOutlined /> },
-    { id: 'account', label: 'Tài khoản', icon: <UserOutlined /> },
+    { id: 'overview', path: '/', label: 'Tổng quan', icon: <AppstoreOutlined /> },
+    { id: 'sensors', path: '/sensors', label: 'Cảm biến', icon: <CompassOutlined /> },
+    { id: 'history', path: '/history', label: 'Lịch sử thiết bị', icon: <ClockCircleOutlined /> },
+    { id: 'account', path: '/account', label: 'Tài khoản', icon: <UserOutlined /> },
   ];
 
   return (
@@ -33,12 +33,11 @@ const AppSidebar = () => {
 
       <nav className="sidebar-menu">
         {menuItems.map((item) => {
-          const path = `/${item.id}`;
-          const isActive = location.pathname === path || (location.pathname === '/' && item.id === 'overview');
+          const isActive = location.pathname === item.path;
 
           return (
             <Link
-              to={path}
+              to={item.path}
               key={item.id}
               className={`menu-item ${isActive ? 'active' : ''}`}
             >

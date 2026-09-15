@@ -8,12 +8,14 @@ import AccountPage from './pages/Account/AccountPage.jsx';
 import SensorHistory from './pages/SensorHistory/SensorHistory.jsx';
 import ActionHistory from './pages/ActionHistory/ActionHistory.jsx';
 
+import Dashboard from './pages/Dashboard/Dashboard.jsx';
+
 function App() {
   return (
     <div className="app-root">
       <Routes>
         <Route element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
-          <Route path="/" element={<div style={{ color: 'white' }}>Nội dung trang web</div>} />
+          <Route path="/" element={<Dashboard />} />
           <Route path="/account" element={<AccountPage />} />
           <Route path="/sensors" element={<SensorHistory />} />
           <Route path="/history" element={<ActionHistory />} />

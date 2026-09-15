@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Select, Table, message } from 'antd';
+import { io } from 'socket.io-client';
 import sensorApi from '../../services/sensorApi';
 import './SensorHistory.css';
 
@@ -40,10 +41,29 @@ export default function SensorHistory() {
     fetchData();
   }, [page, limit, filters]);
 
+  useEffect(() => {
+    const socket = io('http://localhost:8080');
+
+    socket.on('sensor_data_new', (newRecords) => {
+      const hasFilter = filters.time || filters.sensorType || filters.value;
+      if (page !== 1 || hasFilter) return;
+
+      setData(prev => {
+        const updated = [...newRecords.reverse(), ...prev];
+        return updated.slice(0, limit);
+      });
+      setTotal(prev => prev + newRecords.length);
+    });
+
+    return () => {
+      socket.off('sensor_data_new');
+    };
+  }, [page, limit, filters]);
+
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters(prev => ({ ...prev, [name]: value }));
-    setPage(1); // Reset to first page on filter
+    setPage(1);
   };
 
   const formatValue = (type, value) => {
@@ -51,6 +71,13 @@ export default function SensorHistory() {
     if (type === 'humidity') return `${value} %`;
     if (type === 'light') return `${value} lux`;
     return value;
+  };
+
+  const getSensorTypeName = (type) => {
+    if (type === 'temperature') return 'Nhiệt độ';
+    if (type === 'humidity') return 'Độ ẩm';
+    if (type === 'light') return 'Ánh sáng';
+    return type;
   };
 
   const getClassName = (type) => {
@@ -77,7 +104,7 @@ export default function SensorHistory() {
       title: 'Loại cảm biến',
       dataIndex: 'sensorType',
       key: 'sensorType',
-      render: (text) => <span className={`type-${getClassName(text)}`}>{text}</span>,
+      render: (text) => <span className={`type-${getClassName(text)}`}>{getSensorTypeName(text)}</span>,
     },
     {
       title: 'Giá trị',

@@ -25,9 +25,9 @@ const resetDatabase = async () => {
     console.log('Đã xóa dữ liệu cũ thành công.');
 
     const devices = [
-      { id: 'LED1', name: 'Led 1' },
-      { id: 'LED2', name: 'Led 2' },
-      { id: 'LED3', name: 'Led 3' }
+      { id: 'led1', name: 'Led 1' },
+      { id: 'led2', name: 'Led 2' },
+      { id: 'led3', name: 'Led 3' }
     ];
     console.log('Đang thêm các thiết bị...');
     await Device.insertMany(devices);
@@ -35,7 +35,6 @@ const resetDatabase = async () => {
 
     const sensors = [
       { id: 'DHT11', name: 'DHT11' },
-      { id: 'LM393', name: 'LM393' },
       { id: 'BH1750', name: 'BH1750' }
     ];
     console.log('Đang thêm các cảm biến...');

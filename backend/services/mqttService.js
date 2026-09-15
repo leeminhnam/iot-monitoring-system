@@ -1,0 +1,171 @@
+const mqtt = require("mqtt");
+const SensorData = require("../models/sensorData");
+const Sensor = require("../models/sensor");
+const Device = require("../models/device");
+const Action = require("../models/action");
+const { getIo } = require("./socketService");
+
+const TOPIC_SENSOR = "sensor_data";
+const TOPIC_CONTROL = "device_control";
+const TOPIC_RESPONSE = "device_response";
+
+let client;
+let sensorCache = {};
+
+const SENSOR_TYPE_MAP = {
+  temperature: "DHT11",
+  humidity: "DHT11",
+  light: "BH1750"
+};
+
+const initMqtt = async () => {
+  const sensors = await Sensor.find();
+  if (sensors.length === 0) {
+    console.warn("Không tìm thấy cảm biến nào trong CSDL. Hãy chạy script resetDatabase trước.");
+  }
+  for (let sensor of sensors) {
+    sensorCache[sensor.name] = sensor._id;
+  }
+
+  const devices = await Device.find();
+  if (devices.length === 0) {
+    console.warn("Không tìm thấy thiết bị nào trong CSDL. Hãy chạy script resetDatabase trước.");
+  }
+
+  const mqttServer = process.env.MQTT_SERVER;
+  client = mqtt.connect(mqttServer, {
+    username: process.env.MQTT_USERNAME,
+    password: process.env.MQTT_PASSWORD
+  });
+
+  client.on("connect", () => {
+    console.log("Connected to MQTT Broker at", mqttServer);
+    client.subscribe(TOPIC_SENSOR);
+    client.subscribe(TOPIC_RESPONSE);
+  });
+
+  client.on("message", async (topic, message) => {
+    try {
+      const payloadStr = message.toString();
+      const data = JSON.parse(payloadStr);
+
+      if (topic === TOPIC_SENSOR) {
+        const currentTime = new Date();
+        const commonIdPrefix = Date.now().toString();
+        const records = [
+          { value: data.temperature, type: "temperature" },
+          { value: data.humidity, type: "humidity" },
+          { value: data.light, type: "light" }
+        ];
+
+        const newRecords = [];
+        for (let i = 0; i < records.length; i++) {
+          const r = records[i];
+          if (r.value !== undefined) {
+            const created = await SensorData.create({
+              id: commonIdPrefix + i,
+              sensorId: sensorCache[SENSOR_TYPE_MAP[r.type]],
+              sensorType: r.type,
+              value: r.value,
+              time: currentTime
+            });
+            newRecords.push(created);
+          }
+        }
+
+        const io = getIo();
+        if (io) {
+          io.emit("sensor_update", {
+            temperature: data.temperature,
+            humidity: data.humidity,
+            light: data.light,
+            time: currentTime
+          });
+          io.emit("sensor_data_new", newRecords);
+        }
+      }
+      else if (topic === TOPIC_RESPONSE) {
+        console.log("Device response:", data);
+
+        const devices = await Device.find();
+        for (let dev of devices) {
+          const state = data[dev.id]; 
+          if (state) {
+            const actionStatus = state === "ON" ? "turn_on" : "turn_off";
+
+            const pendingAction = await Action.findOne({
+              deviceId: dev._id,
+              status: "pending",
+              action: actionStatus
+            }).sort({ time: -1 });
+
+            if (pendingAction) {
+              pendingAction.status = "success";
+              await pendingAction.save();
+
+              const populatedAction = await Action.findById(pendingAction._id).populate('deviceId', 'name');
+
+              const io = getIo();
+              if (io) {
+                io.emit("device_update", {
+                  id: dev.id,
+                  _id: dev._id,
+                  status: state === "ON" ? "on" : "off"
+                });
+                io.emit("action_update", populatedAction);
+              }
+            } else {
+              const lastAction = await Action.findOne({ deviceId: dev._id, status: { $in: ["success", "on", "off"] } }).sort({ time: -1 });
+              let currentDbState = "OFF";
+              if (lastAction && (lastAction.status === "on" || lastAction.action === "turn_on")) {
+                 currentDbState = "ON";
+              }
+              if (currentDbState !== state) {
+                 const User = require("../models/user");
+                 const defaultUser = await User.findOne();
+                 if (!defaultUser) {
+                   console.warn("Không tìm thấy user mặc định, bỏ qua tạo action");
+                   continue;
+                 }
+                 const newAction = await Action.create({
+                   id: Date.now().toString(),
+                   userId: defaultUser?._id,
+                   deviceId: dev._id,
+                   action: state === "ON" ? "turn_on" : "turn_off",
+                   status: "success",
+                   time: new Date()
+                 });
+
+                 const populatedAction = await Action.findById(newAction._id).populate('deviceId', 'name');
+
+                 const io = getIo();
+                 if (io) {
+                   io.emit("device_update", {
+                     id: dev.id,
+                     _id: dev._id,
+                     status: state === "ON" ? "on" : "off"
+                   });
+                   io.emit("action_update", populatedAction);
+                 }
+              }
+            }
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Error processing MQTT message on topic", topic, ":", err.message);
+    }
+  });
+};
+
+const publishControl = (payloadObj) => {
+  if (client && client.connected) {
+    const payload = JSON.stringify(payloadObj);
+    client.publish(TOPIC_CONTROL, payload);
+    console.log("Published to device_control:", payload);
+  } else {
+    console.warn("MQTT client not connected, cannot publish");
+  }
+};
+
+module.exports = { initMqtt, publishControl };

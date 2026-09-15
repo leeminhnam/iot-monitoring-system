@@ -1,0 +1,135 @@
+.dashboard-container {
+  padding: 24px;
+}
+
+.stats-row {
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background-color: #1e2130 !important;
+  border-radius: 12px;
+  height: 100%;
+}
+
+.stat-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.icon-temp {
+  color: #ff9f43;
+  font-size: 18px;
+}
+
+.icon-humid {
+  color: #00e5ff;
+  font-size: 18px;
+}
+
+.icon-light {
+  color: #ffd700;
+  font-size: 18px;
+}
+
+.stat-value {
+  margin-bottom: 20px;
+}
+
+.stat-value .value {
+  font-size: 36px;
+  font-weight: bold;
+}
+
+.stat-value .value.temp {
+  color: #ff9f43;
+}
+
+.stat-value .value.humid {
+  color: #00e5ff;
+}
+
+.stat-value .value.light {
+  color: #ffd700;
+}
+
+.stat-value .unit {
+  font-size: 16px;
+  margin-left: 4px;
+  color: #8c8c8c;
+}
+
+.stat-footer {
+  display: flex;
+  align-items: center;
+}
+
+.indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.dot-temp {
+  background-color: #ff9f43;
+}
+
+.dot-humid {
+  background-color: #00e5ff;
+}
+
+.dot-light {
+  background-color: #ffd700;
+}
+
+/* Biểu đồ & Đèn */
+.chart-card, .device-card {
+  background-color: #1e2130 !important;
+  border-radius: 12px;
+}
+
+.device-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.device-item {
+  background-color: #2a2d42;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ant-switch {
+  background-color: #4a4d65;
+}
+
+.ant-switch-checked.switch-on {
+  background-color: #00e5ff !important;
+}
+
+.ant-card-head {
+  border-bottom: none !important;
+  padding: 16px 24px 0 24px !important;
+}
+
+.ant-card-body {
+  padding: 24px !important;
+}
+
+/* Sửa tooltip trong chart (Recharts) */
+.recharts-default-tooltip {
+  background-color: #2a2d42 !important;
+  border: 1px solid #3b3f5c !important;
+  border-radius: 8px;
+}
+
+/* Style cho text legend của Recharts */
+.recharts-legend-item-text {
+  color: #8c8c8c !important;
+}

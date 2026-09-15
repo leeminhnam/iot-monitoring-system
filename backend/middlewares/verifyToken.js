@@ -8,7 +8,7 @@ const verifyToken = (req, res, next) => {
       if (err) {
         res.status(403).json({
           success: false,
-          message: "Invalid token",
+          message: "Token không hợp lệ",
         });
       } else {
         req.user = decoded;
@@ -18,7 +18,7 @@ const verifyToken = (req, res, next) => {
   } else {
     return res.status(401).json({
       success: false,
-      message: "Unauthorized",
+      message: "Chưa xác thực",
     });
   }
 }

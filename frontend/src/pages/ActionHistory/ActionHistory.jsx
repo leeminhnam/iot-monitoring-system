@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, message } from 'antd';
+import { io } from 'socket.io-client';
 import actionApi from '../../services/actionApi';
 import './ActionHistory.css';
 
@@ -34,6 +35,31 @@ export default function ActionHistory() {
 
   useEffect(() => {
     fetchData();
+  }, [page, limit, filters]);
+
+  useEffect(() => {
+    const socket = io('http://localhost:8080');
+
+    socket.on('action_update', (newAction) => {
+      const hasFilter = filters.time;
+      if (page !== 1 || hasFilter) return;
+
+      setData(prev => {
+        const existingIndex = prev.findIndex(item => item._id === newAction._id);
+        if (existingIndex !== -1) {
+          const updated = [...prev];
+          updated[existingIndex] = newAction;
+          return updated;
+        }
+        const updated = [newAction, ...prev];
+        return updated.slice(0, limit);
+      });
+      setTotal(prev => prev + 1);
+    });
+
+    return () => {
+      socket.off('action_update');
+    };
   }, [page, limit, filters]);
 
   const handleFilterChange = (e) => {
@@ -79,6 +105,7 @@ export default function ActionHistory() {
       title: 'Lệnh',
       dataIndex: 'action',
       key: 'action',
+      render: (action) => action === 'turn_on' ? 'Bật' : action === 'turn_off' ? 'Tắt' : action,
     },
     {
       title: 'Trạng thái',

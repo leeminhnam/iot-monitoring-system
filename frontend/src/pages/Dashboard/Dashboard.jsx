@@ -3,7 +3,8 @@ import { Card, Row, Col, Switch, Typography, message, Spin } from 'antd';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { FireOutlined, CloudOutlined, BulbOutlined } from '@ant-design/icons';
 import { io } from 'socket.io-client';
-import axiosClient from '../../services/axiosClient';
+import sensorApi from '../../services/sensorApi';
+import deviceApi from '../../services/deviceApi';
 
 import './Dashboard.css';
 
@@ -26,17 +27,30 @@ const Dashboard = () => {
   }, [devices]);
 
   useEffect(() => {
-    Promise.all([
-      axiosClient.get('/sensors/chart-data?limit=50').then(res => {
-        setChartData(res.data);
-      }).catch(err => console.error("Lỗi khi lấy dữ liệu biểu đồ:", err)),
+    const fetchDashboardData = async () => {
+      const fetchChart = async () => {
+        try {
+          const res = await sensorApi.getChartData({ limit: 50 });
+          setChartData(res.data);
+        } catch (err) {
+          console.error("Lỗi khi lấy dữ liệu biểu đồ:", err);
+        }
+      };
 
-      axiosClient.get('/devices').then(res => {
-        setDevices(res.data);
-      }).catch(err => console.error("Lỗi khi lấy danh sách thiết bị:", err))
-    ]).finally(() => {
+      const fetchDevices = async () => {
+        try {
+          const res = await deviceApi.getDevices();
+          setDevices(res.data);
+        } catch (err) {
+          console.error("Lỗi khi lấy danh sách thiết bị:", err);
+        }
+      };
+
+      await Promise.all([fetchChart(), fetchDevices()]);
       setLoading(false);
-    });
+    };
+
+    fetchDashboardData();
 
     const socket = io('http://localhost:8080');
 
@@ -83,28 +97,29 @@ const Dashboard = () => {
     };
   }, []);
 
-  const toggleDevice = (deviceId, checked) => {
+  const toggleDevice = async (deviceId, checked) => {
     setDevices(prev => prev.map(d => d._id === deviceId ? { ...d, loading: true } : d));
 
     const action = checked ? "turn_on" : "turn_off";
-    axiosClient.post(`/devices/${deviceId}/toggle`, { action })
-      .then(res => {
-        setTimeout(() => {
-          const currentDevices = devicesRef.current;
-          const targetDevice = currentDevices.find(d => d._id === deviceId);
 
-          if (targetDevice && targetDevice.loading) {
-            const deviceName = targetDevice.name || 'Thiết bị';
-            message.error(`Không nhận được phản hồi từ ${deviceName} sau 5 giây`);
-            setDevices(prev => prev.map(d => d._id === deviceId ? { ...d, loading: false } : d));
-          }
-        }, 5000);
-      })
-      .catch(err => {
-        console.error("Lỗi khi điều khiển thiết bị:", err);
-        message.error("Điều khiển thiết bị thất bại");
-        setDevices(prev => prev.map(d => d._id === deviceId ? { ...d, loading: false } : d));
-      });
+    try {
+      await deviceApi.toggleDevice(deviceId, action);
+
+      setTimeout(() => {
+        const currentDevices = devicesRef.current;
+        const targetDevice = currentDevices.find(d => d._id === deviceId);
+
+        if (targetDevice && targetDevice.loading) {
+          const deviceName = targetDevice.name || 'Thiết bị';
+          message.error(`Không nhận được phản hồi từ ${deviceName} sau 5 giây`);
+          setDevices(prev => prev.map(d => d._id === deviceId ? { ...d, loading: false } : d));
+        }
+      }, 5000);
+    } catch (err) {
+      console.error("Lỗi khi điều khiển thiết bị:", err);
+      message.error("Điều khiển thiết bị thất bại");
+      setDevices(prev => prev.map(d => d._id === deviceId ? { ...d, loading: false } : d));
+    }
   };
 
   if (loading) {

@@ -7,6 +7,9 @@ const sensorApi = {
   getLatestSensorData: () => {
     return axiosClient.get("/sensors/data/latest");
   },
+  getChartData: (params) => {
+    return axiosClient.get("/sensors/chart-data", { params });
+  },
 };
 
 export default sensorApi;

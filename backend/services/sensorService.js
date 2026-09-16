@@ -65,9 +65,13 @@ const getSensorDataService = async ({ time, sensorType, value }, page = 1, limit
 };
 
 const getLatestSensorDataService = async () => {
-  const data = await SensorData.findOne().sort({ time: -1 });
-  
-  return data;
+  const [temperature, humidity, light] = await Promise.all([
+    SensorData.findOne({ sensorType: 'temperature' }).sort({ time: -1 }),
+    SensorData.findOne({ sensorType: 'humidity' }).sort({ time: -1 }),
+    SensorData.findOne({ sensorType: 'light' }).sort({ time: -1 })
+  ]);
+
+  return [temperature, humidity, light].filter(item => item !== null);
 };
 
 const getChartDataService = async (limit = 50) => {

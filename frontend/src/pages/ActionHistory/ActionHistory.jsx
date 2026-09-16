@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, message } from 'antd';
+import { Table, Select, message } from 'antd';
 import { io } from 'socket.io-client';
 import actionApi from '../../services/actionApi';
 import './ActionHistory.css';
@@ -170,18 +170,19 @@ export default function ActionHistory() {
           <div className="pagination-controls">
             <div className="items-per-page">
               Hiển thị
-              <select
+              <Select
                 className="per-page-select"
                 value={limit}
-                onChange={(e) => {
-                  setLimit(Number(e.target.value));
+                onChange={(value) => {
+                  setLimit(value);
                   setPage(1);
                 }}
-              >
-                <option value={5}>5</option>
-                <option value={10}>10</option>
-                <option value={20}>20</option>
-              </select>
+                options={[
+                  { value: 5, label: '5' },
+                  { value: 10, label: '10' },
+                  { value: 20, label: '20' },
+                ]}
+              />
               dòng / trang
             </div>
 

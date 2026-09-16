@@ -148,6 +148,7 @@ export default function SensorHistory() {
               className="combined-ant-select"
               placeholder="Chọn loại cảm biến"
               value={filters.sensorType || undefined}
+              allowClear
               onChange={(value) => {
                 setFilters(prev => ({ ...prev, sensorType: value || '' }));
                 setPage(1);
@@ -193,18 +194,19 @@ export default function SensorHistory() {
           <div className="pagination-controls">
             <div className="items-per-page">
               Hiển thị
-              <select
+              <Select
                 className="per-page-select"
                 value={limit}
-                onChange={(e) => {
-                  setLimit(Number(e.target.value));
+                onChange={(value) => {
+                  setLimit(value);
                   setPage(1);
                 }}
-              >
-                <option value={5}>5</option>
-                <option value={10}>10</option>
-                <option value={20}>20</option>
-              </select>
+                options={[
+                  { value: 5, label: '5' },
+                  { value: 10, label: '10' },
+                  { value: 20, label: '20' },
+                ]}
+              />
               dòng / trang
             </div>
 

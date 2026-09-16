@@ -23,7 +23,7 @@ const initSocket = (server) => {
 
 const getIo = () => {
   if (!io) {
-    throw new Error("Socket.io not initialized!");
+    throw new Error("Socket.io chưa được khởi tạo?");
   }
   return io;
 };

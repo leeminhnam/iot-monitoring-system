@@ -10,13 +10,13 @@ const getDevicesWithStatusService = async () => {
   for (let device of devices) {
     const lastAction = await Action.findOne({
       deviceId: device._id,
-      status: { $in: ["success", "on", "off"] }
+      status: { $in: ["success"] }
     }).sort({ time: -1 });
 
     let currentStatus = "off";
     if (lastAction) {
-      if (lastAction.status === "on" || lastAction.action === "turn_on") currentStatus = "on";
-      if (lastAction.status === "off" || lastAction.action === "turn_off") currentStatus = "off";
+      if (lastAction.action === "turn_on") currentStatus = "on";
+      if (lastAction.action === "turn_off") currentStatus = "off";
     }
 
     result.push({
@@ -60,9 +60,9 @@ const toggleDeviceService = async (deviceId, action, userId) => {
       controlPayload[d.id] = action === "turn_on" ? "ON" : "OFF";
       controlPayload[d.id + ":" + (action === "turn_on" ? "ON" : "OFF")] = true;
     } else {
-      const last = await Action.findOne({ deviceId: d._id, status: { $in: ["success", "on", "off"] } }).sort({ time: -1 });
+      const last = await Action.findOne({ deviceId: d._id, status: { $in: ["success"] } }).sort({ time: -1 });
       let st = "OFF";
-      if (last && (last.action === "turn_on" || last.status === "on")) st = "ON";
+      if (last && (last.action === "turn_on")) st = "ON";
       controlPayload[d.id] = st;
     }
   }

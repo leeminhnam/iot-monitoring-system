@@ -62,7 +62,6 @@ const getLatestSensorDataService = async () => {
 };
 
 const getChartDataService = async (limit = 50) => {
-  // Lấy (limit * 3) bản ghi mới nhất (vì mỗi lần update có 3 loại cảm biến)
   const rawData = await SensorData.find()
     .sort({ time: -1 })
     .limit(limit * 3)
@@ -70,9 +69,9 @@ const getChartDataService = async (limit = 50) => {
 
   const grouped = {};
   rawData.forEach(item => {
-    const timeKey = item.time.getTime(); // Group bằng exact millisecond
+    const timeKey = item.time.getTime();
     const vnTime = new Date(item.time.getTime() + 7 * 60 * 60 * 1000);
-    const displayTime = vnTime.toISOString().substring(11, 16); // HH:mm
+    const displayTime = vnTime.toISOString().substring(11, 16);
 
     if (!grouped[timeKey]) {
       grouped[timeKey] = { time: displayTime, temperature: null, humidity: null, light: null, timestamp: timeKey };
@@ -82,7 +81,6 @@ const getChartDataService = async (limit = 50) => {
     else if (item.sensorType === "light") grouped[timeKey].light = item.value;
   });
 
-  // Sort lại theo thời gian tăng dần để vẽ biểu đồ từ trái sang phải
   const result = Object.values(grouped)
     .sort((a, b) => a.timestamp - b.timestamp)
     .map(item => {
@@ -90,7 +88,6 @@ const getChartDataService = async (limit = 50) => {
       return item;
     });
 
-  // Đảm bảo chỉ trả về tối đa `limit` phần tử mới nhất
   return result.slice(-limit);
 };
 

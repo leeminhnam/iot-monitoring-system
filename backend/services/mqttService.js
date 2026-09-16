@@ -117,7 +117,7 @@ const initMqtt = async () => {
             } else {
               const lastAction = await Action.findOne({ deviceId: dev._id, status: { $in: ["success", "on", "off"] } }).sort({ time: -1 });
               let currentDbState = "OFF";
-              if (lastAction && (lastAction.status === "on" || lastAction.action === "turn_on")) {
+              if (lastAction && (lastAction.action === "turn_on")) {
                  currentDbState = "ON";
               }
               if (currentDbState !== state) {

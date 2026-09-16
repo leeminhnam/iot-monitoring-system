@@ -63,7 +63,7 @@ const Dashboard = () => {
 
       setChartData(prev => {
         const newData = [...prev, {
-          time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', hour12: false }), // HH:mm giờ VN
+          time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', hour12: false }),
           temperature: data.temperature,
           humidity: data.humidity,
           light: data.light
@@ -212,7 +212,6 @@ const Dashboard = () => {
           </Card>
         </Col>
 
-        {/* Hệ thống Đèn */}
         <Col span={8}>
           <Card
             className="device-card"

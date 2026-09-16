@@ -165,61 +165,48 @@ export default function ActionHistory() {
   return (
     <div className="action-history-container">
       <div className="filters-row">
-        <div className="filter-group-left">
-          <input
-            type="text"
-            name="time"
-            placeholder="Nhập thời gian ..."
-            className="filter-input"
-            value={filters.time}
-            onChange={handleFilterChange}
-          />
-        </div>
+        <Select
+          className="filter-select"
+          placeholder="Chọn thiết bị"
+          value={filters.deviceId || undefined}
+          allowClear
+          onChange={(value) => handleSelectChange('deviceId', value)}
+          options={devices.map(d => ({ value: d._id, label: d.name }))}
+        />
 
-        <div className="filter-group-right">
-          <div className="combined-filter-box">
-            <Select
-              className="combined-ant-select"
-              placeholder="Chọn thiết bị"
-              value={filters.deviceId || undefined}
-              allowClear
-              onChange={(value) => handleSelectChange('deviceId', value)}
-              options={devices.map(d => ({ value: d._id, label: d.name }))}
-              variant="borderless"
-            />
+        <Select
+          className="filter-select"
+          placeholder="Trạng thái"
+          value={filters.status || undefined}
+          allowClear
+          onChange={(value) => handleSelectChange('status', value)}
+          options={[
+            { value: 'success', label: 'Thành công' },
+            { value: 'pending', label: 'Đang thực hiện' },
+            { value: 'failed', label: 'Thất bại' }
+          ]}
+        />
 
-            <div className="filter-divider"></div>
+        <Select
+          className="filter-select"
+          placeholder="Lệnh"
+          value={filters.action || undefined}
+          allowClear
+          onChange={(value) => handleSelectChange('action', value)}
+          options={[
+            { value: 'turn_on', label: 'Bật' },
+            { value: 'turn_off', label: 'Tắt' }
+          ]}
+        />
 
-            <Select
-              className="combined-ant-select"
-              placeholder="Trạng thái"
-              value={filters.status || undefined}
-              allowClear
-              onChange={(value) => handleSelectChange('status', value)}
-              options={[
-                { value: 'success', label: 'Thành công' },
-                { value: 'pending', label: 'Đang thực hiện' },
-                { value: 'failed', label: 'Thất bại' }
-              ]}
-              variant="borderless"
-            />
-
-            <div className="filter-divider"></div>
-
-            <Select
-              className="combined-ant-select"
-              placeholder="Lệnh"
-              value={filters.action || undefined}
-              allowClear
-              onChange={(value) => handleSelectChange('action', value)}
-              options={[
-                { value: 'turn_on', label: 'Bật' },
-                { value: 'turn_off', label: 'Tắt' }
-              ]}
-              variant="borderless"
-            />
-          </div>
-        </div>
+        <input
+          type="text"
+          name="time"
+          placeholder="Nhập thời gian ..."
+          className="filter-input"
+          value={filters.time}
+          onChange={handleFilterChange}
+        />
       </div>
 
       <div className="data-table-container">

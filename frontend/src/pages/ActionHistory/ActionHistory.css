@@ -2,80 +2,50 @@
   color: #fff;
 }
 
-.filters-row {
+.action-history-container .filters-row {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: 16px;
   margin-bottom: 24px;
 }
 
-.filter-group-left {
-  flex: 1;
-  max-width: 300px; /* Adjust to match the width in image */
+.action-history-container .filter-select {
+  width: 180px;
 }
 
-.filter-group-left .filter-input {
-  width: 100%;
-}
-
-.filter-group-right {
-  display: flex;
-  flex: 1;
-  justify-content: flex-end;
-}
-
-.combined-filter-box {
-  display: flex;
-  align-items: center;
-  background-color: #111421;
-  border: 1px solid #2d3043;
-  border-radius: 8px;
-  height: 41px;
-  width: 100%;
-  max-width: 500px;
-}
-
-.combined-ant-select {
-  flex: 1;
-  min-width: 120px;
-}
-
-.combined-ant-select .ant-select-selector {
-  background-color: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  height: 39px !important;
+.action-history-container .filter-select .ant-select-selector {
+  background-color: #111421 !important;
+  border: 1px solid #2d3043 !important;
+  border-radius: 8px !important;
+  height: 41px !important;
   color: #fff !important;
   display: flex;
   align-items: center;
+  transition: all 0.3s;
 }
 
-.combined-ant-select.ant-select-focused .ant-select-selector,
-.combined-ant-select.ant-select-open .ant-select-selector,
-.combined-ant-select:hover .ant-select-selector {
-  border-color: transparent !important;
+.action-history-container .filter-select.ant-select-focused .ant-select-selector,
+.action-history-container .filter-select.ant-select-open .ant-select-selector,
+.action-history-container .filter-select:hover .ant-select-selector {
+  border-color: #ffffff !important;
   box-shadow: none !important;
 }
 
-.combined-ant-select .ant-select-selection-placeholder {
+.action-history-container .filter-select .ant-select-selection-placeholder {
   color: #63677e !important;
   line-height: 39px !important;
 }
 
-.combined-ant-select .ant-select-selection-item {
+.action-history-container .filter-select .ant-select-selection-item {
   line-height: 39px !important;
 }
 
-.combined-ant-select .ant-select-arrow {
+.action-history-container .filter-select .ant-select-arrow {
   color: #63677e !important;
 }
 
-.filter-divider {
-  width: 1px;
-  height: 24px;
-  background-color: #2d3043;
-}
-
-.filter-input {
+.action-history-container .filter-input {
+  width: 180px !important;
   background-color: #111421;
   border: 1px solid #2d3043;
   border-radius: 8px;
@@ -84,17 +54,14 @@
   font-size: 14px;
   outline: none;
   height: 41px;
-  width: 100%;
   box-sizing: border-box;
+  transition: all 0.3s;
 }
 
-.filter-input:focus {
-  border-color: #2d3043;
+.action-history-container .filter-input:focus,
+.action-history-container .filter-input:hover {
+  border-color: #ffffff;
   box-shadow: none;
-}
-
-.filter-input::placeholder {
-  color: #63677e;
 }
 
 .status-cell {

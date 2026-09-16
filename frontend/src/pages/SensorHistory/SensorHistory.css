@@ -27,7 +27,7 @@
 .sensor-history-container .filter-select.ant-select-focused .ant-select-selector,
 .sensor-history-container .filter-select.ant-select-open .ant-select-selector,
 .sensor-history-container .filter-select:hover .ant-select-selector {
-  border-color: #63677e !important;
+  border-color: #ffffff !important;
   box-shadow: none !important;
 }
 
@@ -60,7 +60,7 @@
 
 .filter-input:focus,
 .filter-input:hover {
-  border-color: #63677e;
+  border-color: #ffffff;
   box-shadow: none;
 }
 

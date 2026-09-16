@@ -2,95 +2,50 @@
   color: #fff;
 }
 
-.filters-row {
+.sensor-history-container .filters-row {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: 16px;
   margin-bottom: 24px;
 }
 
-.filter-group-left {
-  flex: 1;
-  max-width: 300px;
+.sensor-history-container .filter-select {
+  width: 180px;
 }
 
-.filter-group-left .filter-input {
-  width: 100%;
-}
-
-.filter-group-right {
-  display: flex;
-  flex: 1;
-  justify-content: flex-end;
-}
-
-.combined-filter-box {
-  display: flex;
-  align-items: center;
-  background-color: #111421;
-  border: 1px solid #2d3043;
-  border-radius: 8px;
-  height: 41px;
-  width: 100%;
-  max-width: 450px;
-}
-
-.combined-ant-select {
-  flex: 1;
-  min-width: 180px;
-}
-
-.combined-ant-select .ant-select-selector {
-  background-color: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  height: 39px !important;
+.sensor-history-container .filter-select .ant-select-selector {
+  background-color: #111421 !important;
+  border: 1px solid #2d3043 !important;
+  border-radius: 8px !important;
+  height: 41px !important;
   color: #fff !important;
   display: flex;
   align-items: center;
+  transition: all 0.3s;
 }
 
-.combined-ant-select.ant-select-focused .ant-select-selector,
-.combined-ant-select.ant-select-open .ant-select-selector,
-.combined-ant-select:hover .ant-select-selector {
-  border-color: transparent !important;
+.sensor-history-container .filter-select.ant-select-focused .ant-select-selector,
+.sensor-history-container .filter-select.ant-select-open .ant-select-selector,
+.sensor-history-container .filter-select:hover .ant-select-selector {
+  border-color: #63677e !important;
   box-shadow: none !important;
 }
 
-.combined-ant-select .ant-select-selection-placeholder {
+.sensor-history-container .filter-select .ant-select-selection-placeholder {
   color: #63677e !important;
   line-height: 39px !important;
 }
 
-.combined-ant-select .ant-select-selection-item {
+.sensor-history-container .filter-select .ant-select-selection-item {
   line-height: 39px !important;
 }
 
-.combined-ant-select .ant-select-arrow {
+.sensor-history-container .filter-select .ant-select-arrow {
   color: #63677e !important;
 }
 
-.filter-divider {
-  width: 1px;
-  height: 24px;
-  background-color: #2d3043;
-}
-
-.combined-filter-input {
-  flex: 1.2;
-  background-color: transparent;
-  border: none;
-  color: #fff;
-  padding: 10px 16px;
-  font-size: 14px;
-  outline: none;
-  height: 100%;
-}
-
-.combined-filter-input::placeholder {
-  color: #63677e;
-}
-
-.filter-input {
+.sensor-history-container .filter-input {
+  width: 180px !important;
   background-color: #111421;
   border: 1px solid #2d3043;
   border-radius: 8px;
@@ -100,10 +55,12 @@
   outline: none;
   height: 41px;
   box-sizing: border-box;
+  transition: all 0.3s;
 }
 
-.filter-input:focus {
-  border-color: #2d3043;
+.filter-input:focus,
+.filter-input:hover {
+  border-color: #63677e;
   box-shadow: none;
 }
 

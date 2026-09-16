@@ -151,48 +151,39 @@ export default function SensorHistory() {
   return (
     <div className="sensor-history-container">
       <div className="filters-row">
-        <div className="filter-group-left">
-          <input
-            type="text"
-            name="time"
-            placeholder="Nhập thời gian ..."
-            className="filter-input"
-            value={filters.time}
-            onChange={handleFilterChange}
-          />
-        </div>
+        <Select
+          className="filter-select"
+          placeholder="Chọn loại cảm biến"
+          value={filters.sensorType || undefined}
+          allowClear
+          onChange={(value) => {
+            setFilters(prev => ({ ...prev, sensorType: value || '' }));
+            setPage(1);
+          }}
+          options={[
+            { value: 'temperature', label: 'Nhiệt độ' },
+            { value: 'humidity', label: 'Độ ẩm' },
+            { value: 'light', label: 'Ánh sáng' }
+          ]}
+        />
 
-        <div className="filter-group-right">
-          <div className="combined-filter-box">
-            <Select
-              className="combined-ant-select"
-              placeholder="Chọn loại cảm biến"
-              value={filters.sensorType || undefined}
-              allowClear
-              onChange={(value) => {
-                setFilters(prev => ({ ...prev, sensorType: value || '' }));
-                setPage(1);
-              }}
-              options={[
-                { value: 'temperature', label: 'Nhiệt độ' },
-                { value: 'humidity', label: 'Độ ẩm' },
-                { value: 'light', label: 'Ánh sáng' }
-              ]}
-              variant="borderless"
-            />
+        <input
+          type="text"
+          name="value"
+          placeholder="Giá trị cảm biến ...."
+          className="filter-input"
+          value={filters.value}
+          onChange={handleFilterChange}
+        />
 
-            <div className="filter-divider"></div>
-
-            <input
-              type="text"
-              name="value"
-              placeholder="Giá trị cảm biến ...."
-              className="combined-filter-input"
-              value={filters.value}
-              onChange={handleFilterChange}
-            />
-          </div>
-        </div>
+        <input
+          type="text"
+          name="time"
+          placeholder="Nhập thời gian ..."
+          className="filter-input"
+          value={filters.time}
+          onChange={handleFilterChange}
+        />
       </div>
 
       <div className="data-table-container">

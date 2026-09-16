@@ -2,12 +2,13 @@ const asyncHandler = require("../utils/asyncHandler");
 const { getSensorDataService, getLatestSensorDataService, getChartDataService } = require('../services/sensorService');
 
 const getSensorData = asyncHandler(async (req, res) => {
-  const { startTime, endTime, time, sensorType, value, page, limit } = req.query;
+  const { startTime, endTime, time, sensorType, value, page, limit, sortBy, sortOrder } = req.query;
 
   const result = await getSensorDataService(
     { startTime, endTime, time, sensorType, value },
     parseInt(page) || 1,
-    parseInt(limit) || 10
+    parseInt(limit) || 10,
+    { sortBy, sortOrder }
   );
 
   return res.json(result);

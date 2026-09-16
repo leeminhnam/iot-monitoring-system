@@ -78,7 +78,7 @@ const Dashboard = () => {
       const device = currentDevices.find(d => d._id === data._id);
 
       if (device?.loading) {
-        const deviceName = device.name || 'Thiết bị';
+        const deviceName = device.name || 'thiết bị';
         if (data.status === 'on') {
           message.success(`Bật ${deviceName} thành công`);
         } else {
@@ -136,7 +136,7 @@ const Dashboard = () => {
         <Col span={8}>
           <Card className="stat-card" bordered={false}>
             <div className="stat-title">
-              <Text style={{color: '#8c8c8c'}}>Nhiệt độ</Text>
+              <Text style={{ color: '#8c8c8c' }}>Nhiệt độ</Text>
               <FireOutlined className="icon-temp" />
             </div>
             <div className="stat-value">
@@ -145,7 +145,7 @@ const Dashboard = () => {
             </div>
             <div className="stat-footer">
               <div className="indicator dot-temp"></div>
-              <Text style={{color: '#8c8c8c', marginLeft: 8}}>Bình thường</Text>
+              <Text style={{ color: '#8c8c8c', marginLeft: 8 }}>Bình thường</Text>
             </div>
           </Card>
         </Col>
@@ -153,7 +153,7 @@ const Dashboard = () => {
         <Col span={8}>
           <Card className="stat-card" bordered={false}>
             <div className="stat-title">
-              <Text style={{color: '#8c8c8c'}}>Độ ẩm</Text>
+              <Text style={{ color: '#8c8c8c' }}>Độ ẩm</Text>
               <CloudOutlined className="icon-humid" />
             </div>
             <div className="stat-value">
@@ -162,7 +162,7 @@ const Dashboard = () => {
             </div>
             <div className="stat-footer">
               <div className="indicator dot-humid"></div>
-              <Text style={{color: '#8c8c8c', marginLeft: 8}}>Dịu nhẹ</Text>
+              <Text style={{ color: '#8c8c8c', marginLeft: 8 }}>Dịu nhẹ</Text>
             </div>
           </Card>
         </Col>
@@ -170,7 +170,7 @@ const Dashboard = () => {
         <Col span={8}>
           <Card className="stat-card" bordered={false}>
             <div className="stat-title">
-              <Text style={{color: '#8c8c8c'}}>Ánh sáng</Text>
+              <Text style={{ color: '#8c8c8c' }}>Ánh sáng</Text>
               <BulbOutlined className="icon-light" />
             </div>
             <div className="stat-value">
@@ -179,7 +179,7 @@ const Dashboard = () => {
             </div>
             <div className="stat-footer">
               <div className="indicator dot-light"></div>
-              <Text style={{color: '#8c8c8c', marginLeft: 8}}>Đủ sáng</Text>
+              <Text style={{ color: '#8c8c8c', marginLeft: 8 }}>Đủ sáng</Text>
             </div>
           </Card>
         </Col>
@@ -190,14 +190,14 @@ const Dashboard = () => {
           <Card
             className="chart-card"
             bordered={false}
-            title={<Text style={{color: '#fff', fontSize: '16px'}}>Đồ thị cảm biến (Thời gian thực)</Text>}
+            title={<Text style={{ color: '#fff', fontSize: '16px' }}>Đồ thị cảm biến (Thời gian thực)</Text>}
           >
             <div style={{ width: '100%', height: 250 }}>
               <ResponsiveContainer>
                 <LineChart data={chartData} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#2c2e3e" vertical={false} />
-                  <XAxis dataKey="time" stroke="#8c8c8c" tick={{fill: '#8c8c8c', fontSize: 12}} />
-                  <YAxis stroke="#8c8c8c" tick={{fill: '#8c8c8c', fontSize: 12}} />
+                  <XAxis dataKey="time" stroke="#8c8c8c" tick={{ fill: '#8c8c8c', fontSize: 12 }} />
+                  <YAxis stroke="#8c8c8c" tick={{ fill: '#8c8c8c', fontSize: 12 }} />
                   <Tooltip
                     contentStyle={{ backgroundColor: '#1e2130', border: 'none', color: '#fff' }}
                     itemStyle={{ color: '#fff' }}
@@ -216,15 +216,15 @@ const Dashboard = () => {
           <Card
             className="device-card"
             bordered={false}
-            title={<Text style={{color: '#fff', fontSize: '16px'}}>Hệ thống Đèn</Text>}
+            title={<Text style={{ color: '#fff', fontSize: '16px' }}>Hệ thống Đèn</Text>}
           >
             <div className="device-list">
               {devices.length === 0 ? (
                 [1, 2, 3].map(i => (
                   <div className="device-item" key={i}>
                     <div className="device-info">
-                      <Text style={{color: '#fff', fontSize: '15px'}}>Đèn {i}</Text>
-                      <Text style={{color: '#8c8c8c', fontSize: '12px', display: 'block'}}>Đang tắt</Text>
+                      <Text style={{ color: '#fff', fontSize: '15px' }}>Đèn {i}</Text>
+                      <Text style={{ color: '#8c8c8c', fontSize: '12px', display: 'block' }}>Đang tắt</Text>
                     </div>
                     <Switch defaultChecked={false} />
                   </div>
@@ -233,8 +233,8 @@ const Dashboard = () => {
                 devices.map((device, index) => (
                   <div className="device-item" key={device._id}>
                     <div className="device-info">
-                      <Text style={{color: '#fff', fontSize: '15px'}}>{device.name || `Đèn ${index + 1}`}</Text>
-                      <Text style={{color: '#8c8c8c', fontSize: '12px', display: 'block'}}>
+                      <Text style={{ color: '#fff', fontSize: '15px' }}>{device.name || `Đèn ${index + 1}`}</Text>
+                      <Text style={{ color: '#8c8c8c', fontSize: '12px', display: 'block' }}>
                         {device.status === 'on' ? 'Đang bật' : 'Đang tắt'}
                       </Text>
                     </div>

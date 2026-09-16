@@ -1,6 +1,6 @@
 const SensorData = require('../models/sensorData');
 
-const getSensorDataService = async ({ time, sensorType, value }, page = 1, limit = 10) => {
+const getSensorDataService = async ({ time, sensorType, value }, page = 1, limit = 10, sort = {}) => {
   const query = {};
   const exprConditions = [];
 
@@ -40,8 +40,17 @@ const getSensorDataService = async ({ time, sensorType, value }, page = 1, limit
 
   const skip = (page - 1) * limit;
 
+  // Build sort object
+  const sortObj = {};
+  const allowedSortFields = ['value', 'time', 'sensorType'];
+  if (sort.sortBy && allowedSortFields.includes(sort.sortBy)) {
+    sortObj[sort.sortBy] = sort.sortOrder === 'asc' ? 1 : -1;
+  } else {
+    sortObj.time = -1; // default sort
+  }
+
   const data = await SensorData.find(query)
-    .sort({ time: -1 })
+    .sort(sortObj)
     .skip(skip)
     .limit(limit);
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table, Select, message } from 'antd';
 import { io } from 'socket.io-client';
 import actionApi from '../../services/actionApi';
+import deviceApi from '../../services/deviceApi';
 import './ActionHistory.css';
 
 export default function ActionHistory() {
@@ -11,10 +12,26 @@ export default function ActionHistory() {
   const [limit, setLimit] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [devices, setDevices] = useState([]);
 
   const [filters, setFilters] = useState({
-    time: ''
+    time: '',
+    deviceId: '',
+    status: '',
+    action: ''
   });
+
+  useEffect(() => {
+    const fetchDevices = async () => {
+      try {
+        const res = await deviceApi.getDevices();
+        setDevices(res.data || []);
+      } catch {
+        // silently ignore — filter just won't have device options
+      }
+    };
+    fetchDevices();
+  }, []);
 
   const fetchData = async () => {
     try {
@@ -22,7 +39,10 @@ export default function ActionHistory() {
       const params = {
         page,
         limit,
-        ...(filters.time && { time: filters.time })
+        ...(filters.time && { time: filters.time }),
+        ...(filters.deviceId && { deviceId: filters.deviceId }),
+        ...(filters.status && { status: filters.status }),
+        ...(filters.action && { action: filters.action })
       };
 
       const response = await actionApi.getActionHistory(params);
@@ -39,13 +59,14 @@ export default function ActionHistory() {
 
   useEffect(() => {
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, limit, filters]);
 
   useEffect(() => {
     const socket = io('http://localhost:8080');
 
     socket.on('action_update', (newAction) => {
-      const hasFilter = filters.time;
+      const hasFilter = filters.time || filters.deviceId || filters.status || filters.action;
       if (page !== 1 || hasFilter) return;
 
       setData(prev => {
@@ -72,6 +93,11 @@ export default function ActionHistory() {
     setPage(1);
   };
 
+  const handleSelectChange = (name, value) => {
+    setFilters(prev => ({ ...prev, [name]: value || '' }));
+    setPage(1);
+  };
+
   const formatDate = (dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -85,7 +111,7 @@ export default function ActionHistory() {
       return { text: 'Thành công', color: '#10b981' };
     }
     if (statusLower === 'pending') {
-      return { text: 'Đang thực hiện', color: '#f59e0b' }; 
+      return { text: 'Đang thực hiện', color: '#f59e0b' };
     }
     if (statusLower === 'failed') {
       return { text: 'Thất bại', color: '#ef4444' };
@@ -148,6 +174,51 @@ export default function ActionHistory() {
             value={filters.time}
             onChange={handleFilterChange}
           />
+        </div>
+
+        <div className="filter-group-right">
+          <div className="combined-filter-box">
+            <Select
+              className="combined-ant-select"
+              placeholder="Chọn thiết bị"
+              value={filters.deviceId || undefined}
+              allowClear
+              onChange={(value) => handleSelectChange('deviceId', value)}
+              options={devices.map(d => ({ value: d._id, label: d.name }))}
+              variant="borderless"
+            />
+
+            <div className="filter-divider"></div>
+
+            <Select
+              className="combined-ant-select"
+              placeholder="Trạng thái"
+              value={filters.status || undefined}
+              allowClear
+              onChange={(value) => handleSelectChange('status', value)}
+              options={[
+                { value: 'success', label: 'Thành công' },
+                { value: 'pending', label: 'Đang thực hiện' },
+                { value: 'failed', label: 'Thất bại' }
+              ]}
+              variant="borderless"
+            />
+
+            <div className="filter-divider"></div>
+
+            <Select
+              className="combined-ant-select"
+              placeholder="Lệnh"
+              value={filters.action || undefined}
+              allowClear
+              onChange={(value) => handleSelectChange('action', value)}
+              options={[
+                { value: 'turn_on', label: 'Bật' },
+                { value: 'turn_off', label: 'Tắt' }
+              ]}
+              variant="borderless"
+            />
+          </div>
         </div>
       </div>
 

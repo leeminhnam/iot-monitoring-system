@@ -1,6 +1,6 @@
 const Action = require('../models/action');
 
-const getActionHistoryService = async ({ time }, page = 1, limit = 10) => {
+const getActionHistoryService = async ({ time, deviceId, status, action }, page = 1, limit = 10) => {
   const query = {};
 
   if (time) {
@@ -17,6 +17,18 @@ const getActionHistoryService = async ({ time }, page = 1, limit = 10) => {
         options: "i"
       }
     };
+  }
+
+  if (deviceId) {
+    query.deviceId = deviceId;
+  }
+
+  if (status) {
+    query.status = status;
+  }
+
+  if (action) {
+    query.action = action;
   }
 
   const skip = (page - 1) * limit;

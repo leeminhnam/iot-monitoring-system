@@ -11,6 +11,7 @@ export default function SensorHistory() {
   const [limit, setLimit] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [sortOrder, setSortOrder] = useState(null); // null | 'asc' | 'desc'
 
   const [filters, setFilters] = useState({
     time: '',
@@ -26,7 +27,8 @@ export default function SensorHistory() {
         limit,
         ...(filters.time && { time: filters.time }),
         ...(filters.sensorType && { sensorType: filters.sensorType }),
-        ...(filters.value && { value: filters.value })
+        ...(filters.value && { value: filters.value }),
+        ...(sortOrder && { sortBy: 'value', sortOrder })
       };
 
       const response = await sensorApi.getSensorData(params);
@@ -43,7 +45,17 @@ export default function SensorHistory() {
 
   useEffect(() => {
     fetchData();
-  }, [page, limit, filters]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, limit, filters, sortOrder]);
+
+  const handleSortValue = () => {
+    setSortOrder(prev => {
+      if (prev === null) return 'asc';
+      if (prev === 'asc') return 'desc';
+      return null;
+    });
+    setPage(1);
+  };
 
   useEffect(() => {
     const socket = io('http://localhost:8080');
@@ -111,7 +123,15 @@ export default function SensorHistory() {
       render: (text) => <span className={`type-${getClassName(text)}`}>{getSensorTypeName(text)}</span>,
     },
     {
-      title: 'Giá trị',
+      title: (
+        <span className="sort-header" onClick={handleSortValue}>
+          Giá trị
+          <span className="sort-icons">
+            <span className={`sort-arrow sort-asc${sortOrder === 'asc' ? ' active' : ''}`}>▲</span>
+            <span className={`sort-arrow sort-desc${sortOrder === 'desc' ? ' active' : ''}`}>▼</span>
+          </span>
+        </span>
+      ),
       dataIndex: 'value',
       key: 'value',
       render: (value, record) => (

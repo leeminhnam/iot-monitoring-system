@@ -79,13 +79,13 @@ export default function AccountPage() {
               </div>
             </a>
 
-            <a href="https://api.iot-monitoring.online" target="_blank" rel="noopener noreferrer" className="link-item">
+            <a href="https://solar-flare-6446.postman.co/workspace/L%C3%AA-Minh-Nam's-Workspace~1167b716-db01-43e1-8e11-a352395bf5de/collection/58276532-f04bfa21-699d-46e7-84be-aad025aae099?action=share&creator=58276532" target="_blank" rel="noopener noreferrer" className="link-item">
               <div className="link-icon-wrapper">
                 <SendOutlined />
               </div>
               <div className="link-text">
                 <span className="link-name">Postman API Docs</span>
-                <span className="link-url">api.iot-monitoring.online</span>
+                <span className="link-url">https://solar-flare-6446.postman.co/workspace/L%C3%AA-Minh-Nam's-Workspace~1167b716-db01-43e1-8e11-a352395bf5de/collection/58276532-f04bfa21-699d-46e7-84be-aad025aae099?action=share&creator=58276532</span>
               </div>
             </a>
 

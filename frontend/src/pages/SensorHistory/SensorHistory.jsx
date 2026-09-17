@@ -202,25 +202,25 @@ export default function SensorHistory() {
             Trang {page} / {totalPages || 1}
           </div>
 
-          <div className="pagination-controls">
-            <div className="items-per-page">
-              Hiển thị
-              <Select
-                className="per-page-select"
-                value={limit}
-                onChange={(value) => {
-                  setLimit(value);
-                  setPage(1);
-                }}
-                options={[
-                  { value: 5, label: '5' },
-                  { value: 10, label: '10' },
-                  { value: 20, label: '20' },
-                ]}
-              />
-              dòng / trang
-            </div>
+          <div className="items-per-page">
+            Hiển thị
+            <Select
+              className="per-page-select"
+              value={limit}
+              onChange={(value) => {
+                setLimit(value);
+                setPage(1);
+              }}
+              options={[
+                { value: 5, label: '5' },
+                { value: 10, label: '10' },
+                { value: 20, label: '20' },
+              ]}
+            />
+            dòng / trang
+          </div>
 
+          <div className="pagination-controls">
             <button
               className="btn-page btn-page-prev"
               disabled={page === 1}

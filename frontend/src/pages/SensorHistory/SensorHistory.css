@@ -140,8 +140,8 @@
 
 /* Pagination styles */
 .pagination-container {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   padding: 16px 24px; /* Add padding here since container padding is removed */
   margin-top: 0;
@@ -149,9 +149,18 @@
   font-size: 14px;
 }
 
+.pagination-container .page-info {
+  justify-self: start;
+}
+
+.pagination-container .items-per-page {
+  justify-self: center;
+}
+
 .pagination-controls {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 16px;
 }
 

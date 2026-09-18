@@ -65,7 +65,7 @@ export default function AccountPage() {
               </div>
               <div className="link-text">
                 <span className="link-name">GitHub Repository</span>
-                <span className="link-url">github.com/leeminhnam/iot-monitoring-system</span>
+                <span className="link-url">leeminhnam/iot-monitoring-system</span>
               </div>
             </a>
 
@@ -75,7 +75,7 @@ export default function AccountPage() {
               </div>
               <div className="link-text">
                 <span className="link-name">Figma Design Mockup</span>
-                <span className="link-url">www.figma.com/design/RWWbEoOyNutxmsuOjG8KZ0/IoT-Device-Monitoring-Dashboard?node-id=1559-412&p=f&t=cmB8tENHGflmpjCJ-0</span>
+                <span className="link-url">figma.com - IoT Device Monitoring Dashboard</span>
               </div>
             </a>
 
@@ -85,7 +85,7 @@ export default function AccountPage() {
               </div>
               <div className="link-text">
                 <span className="link-name">Postman API Docs</span>
-                <span className="link-url">https://solar-flare-6446.postman.co/workspace/L%C3%AA-Minh-Nam's-Workspace~1167b716-db01-43e1-8e11-a352395bf5de/collection/58276532-f04bfa21-699d-46e7-84be-aad025aae099?action=share&creator=58276532</span>
+                <span className="link-url">postman.com - IoT Monitoring API Collection</span>
               </div>
             </a>
 

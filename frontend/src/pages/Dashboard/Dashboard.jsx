@@ -46,7 +46,23 @@ const Dashboard = () => {
         }
       };
 
-      await Promise.all([fetchChart(), fetchDevices()]);
+        const fetchLatestSensor = async () => {
+        try {
+          const res = await sensorApi.getLatestSensorData();
+          const arr = res.data;
+          const parsed = { temperature: 0, humidity: 0, light: 0 };
+          arr.forEach(item => {
+            if (item.sensorType === 'temperature') parsed.temperature = item.value;
+            else if (item.sensorType === 'humidity') parsed.humidity = item.value;
+            else if (item.sensorType === 'light') parsed.light = item.value;
+          });
+          setCurrentData(parsed);
+        } catch (err) {
+          console.error("Lỗi khi lấy dữ liệu cảm biến mới nhất:", err);
+        }
+      };
+
+      await Promise.all([fetchChart(), fetchDevices(), fetchLatestSensor()]);
       setLoading(false);
     };
 
@@ -54,7 +70,48 @@ const Dashboard = () => {
 
     const socket = io('http://localhost:8080');
 
+    let fallbackInterval = null;
+
+    const startFallback = () => {
+      if (fallbackInterval) return;
+      fallbackInterval = setInterval(async () => {
+        try {
+          const res = await sensorApi.getLatestSensorData();
+          const arr = res.data;
+          const parsed = { temperature: 0, humidity: 0, light: 0 };
+          arr.forEach(item => {
+            if (item.sensorType === 'temperature') parsed.temperature = item.value;
+            else if (item.sensorType === 'humidity') parsed.humidity = item.value;
+            else if (item.sensorType === 'light') parsed.light = item.value;
+          });
+          setCurrentData(parsed);
+        } catch (err) {
+          console.error("Lỗi fallback lấy dữ liệu cảm biến:", err);
+        }
+      }, 10000);
+    };
+
+    const stopFallback = () => {
+      if (fallbackInterval) {
+        clearInterval(fallbackInterval);
+        fallbackInterval = null;
+      }
+    };
+
+    socket.on('connect_error', () => {
+      startFallback();
+    });
+
+    socket.on('disconnect', () => {
+      startFallback();
+    });
+
+    socket.on('connect', () => {
+      stopFallback();
+    });
+
     socket.on('sensor_update', (data) => {
+      stopFallback();
       setCurrentData({
         temperature: data.temperature || 0,
         humidity: data.humidity || 0,
@@ -92,6 +149,10 @@ const Dashboard = () => {
     });
 
     return () => {
+      stopFallback();
+      socket.off('connect');
+      socket.off('connect_error');
+      socket.off('disconnect');
       socket.off('sensor_update');
       socket.off('device_update');
     };

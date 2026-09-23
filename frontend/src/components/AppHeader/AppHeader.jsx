@@ -1,5 +1,5 @@
 import { BellOutlined, UserOutlined, LogoutOutlined, ProfileOutlined } from '@ant-design/icons';
-import { Dropdown } from 'antd';
+import { Dropdown, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import useUser from '../../hooks/useUser';
 import './AppHeader.css';
@@ -47,7 +47,7 @@ const AppHeader = ({ title = 'Giá trị cảm biến' }) => {
         </div>
 
         <div className="header-actions">
-          <button className="notification-btn">
+          <button className="notification-btn" onClick={() => message.info('Tính năng đang phát triển')}>
             <BellOutlined />
           </button>
 

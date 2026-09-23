@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table, Select, Input, message } from 'antd';
 import { io } from 'socket.io-client';
 import actionApi from '../../services/actionApi';
+import deviceApi from '../../services/deviceApi';
 import './ActionHistory.css';
 
 export default function ActionHistory() {
@@ -11,6 +12,7 @@ export default function ActionHistory() {
   const [limit, setLimit] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [devices, setDevices] = useState([]);
 
   const [filters, setFilters] = useState({
     time: '',
@@ -46,6 +48,22 @@ export default function ActionHistory() {
   useEffect(() => {
     fetchData();
   }, [page, limit, filters]);
+
+  useEffect(() => {
+    const fetchDevices = async () => {
+      try {
+        const response = await deviceApi.getDevices();
+        const deviceList = response.data?.data || response.data || [];
+        setDevices(deviceList.map(d => ({
+          value: d.name,
+          label: d.name,
+        })));
+      } catch (error) {
+        console.error('Lỗi khi tải danh sách thiết bị:', error);
+      }
+    };
+    fetchDevices();
+  }, []);
 
   useEffect(() => {
     const socket = io('http://localhost:8080');
@@ -160,12 +178,13 @@ export default function ActionHistory() {
   return (
     <div className="action-history-container">
       <div className="filters-row">
-        <Input
-          name="deviceName"
-          placeholder="Nhập tên thiết bị ..."
-          className="filter-input"
-          value={filters.deviceName}
-          onChange={handleFilterChange}
+        <Select
+          className="filter-select"
+          placeholder="Chọn thiết bị"
+          value={filters.deviceName || undefined}
+          allowClear
+          onChange={(value) => handleSelectChange('deviceName', value)}
+          options={devices}
         />
 
         <Select

@@ -13,7 +13,8 @@
   width: 180px;
 }
 
-.sensor-history-container .filter-select .ant-select-selector {
+.sensor-history-container .filter-select .ant-select-selector,
+.sensor-history-container .filter-select.ant-select .ant-select-selector {
   background-color: #111421 !important;
   border: 1px solid #2d3043 !important;
   border-radius: 8px !important;

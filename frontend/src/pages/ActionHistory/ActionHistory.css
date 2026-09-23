@@ -77,7 +77,6 @@
   display: inline-block;
 }
 
-/* We reuse all the custom table styles since they share the same UI */
 .data-table-container {
   background-color: #212330;
   border-radius: 12px;

@@ -34,6 +34,21 @@ createRoot(document.getElementById('root')).render(
           Menu: {
             colorItemText: '#a0aec0',
             colorItemTextHover: '#ffffff',
+          },
+          Select: {
+            colorBgContainer: '#111421',
+            colorBorder: '#2d3043',
+            colorText: '#fff',
+            colorTextPlaceholder: '#63677e',
+            borderRadius: 8,
+            controlHeight: 41,
+            colorBgElevated: '#1e253c',
+            optionSelectedBg: 'rgba(0, 229, 255, 0.1)',
+            colorIcon: '#63677e',
+            colorIconHover: '#fff',
+            hoverBorderColor: '#ffffff',
+            activeBorderColor: '#ffffff',
+            activeShadow: 'none',
           }
         }
       }}

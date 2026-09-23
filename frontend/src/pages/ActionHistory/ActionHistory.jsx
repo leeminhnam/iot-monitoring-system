@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Select, message } from 'antd';
+import { Table, Select, Input, message } from 'antd';
 import { io } from 'socket.io-client';
 import actionApi from '../../services/actionApi';
 import './ActionHistory.css';
@@ -45,7 +45,6 @@ export default function ActionHistory() {
 
   useEffect(() => {
     fetchData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, limit, filters]);
 
   useEffect(() => {
@@ -151,8 +150,7 @@ export default function ActionHistory() {
   return (
     <div className="action-history-container">
       <div className="filters-row">
-        <input
-          type="text"
+        <Input
           name="deviceName"
           placeholder="Nhập tên thiết bị ..."
           className="filter-input"
@@ -185,8 +183,7 @@ export default function ActionHistory() {
           ]}
         />
 
-        <input
-          type="text"
+        <Input
           name="time"
           placeholder="Nhập thời gian ..."
           className="filter-input"

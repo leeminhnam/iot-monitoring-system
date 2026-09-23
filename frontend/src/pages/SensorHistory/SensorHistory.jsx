@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Select, Table, message } from 'antd';
+import { Select, Table, Input, message } from 'antd';
 import { io } from 'socket.io-client';
 import sensorApi from '../../services/sensorApi';
 import './SensorHistory.css';
@@ -11,7 +11,7 @@ export default function SensorHistory() {
   const [limit, setLimit] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [sortOrder, setSortOrder] = useState(null); // null | 'asc' | 'desc'
+  const [sortOrder, setSortOrder] = useState(null);
 
   const [filters, setFilters] = useState({
     time: '',
@@ -45,7 +45,6 @@ export default function SensorHistory() {
 
   useEffect(() => {
     fetchData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, limit, filters, sortOrder]);
 
   const handleSortValue = () => {
@@ -167,8 +166,7 @@ export default function SensorHistory() {
           ]}
         />
 
-        <input
-          type="text"
+        <Input
           name="value"
           placeholder="Giá trị cảm biến ...."
           className="filter-input"
@@ -176,8 +174,7 @@ export default function SensorHistory() {
           onChange={handleFilterChange}
         />
 
-        <input
-          type="text"
+        <Input
           name="time"
           placeholder="Nhập thời gian ..."
           className="filter-input"

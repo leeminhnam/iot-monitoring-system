@@ -40,10 +40,11 @@ const getActionHistoryService = async ({ time, deviceName, status, action }, pag
 
   const data = await Action.find(query)
     .populate('deviceId', 'name')
+    .populate('userId', 'username firstName lastName')
     .sort({ time: -1 })
     .skip(skip)
     .limit(limit);
-
+  console.log(data)
   const total = await Action.countDocuments(query);
 
   return {

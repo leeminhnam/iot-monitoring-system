@@ -140,6 +140,16 @@ export default function ActionHistory() {
       }
     },
     {
+      title: 'Người thực hiện',
+      dataIndex: 'userId',
+      key: 'userId',
+      render: (user) => {
+        if (!user) return <span>Không rõ</span>;
+        const fullName = [ user.lastName, user.firstName].filter(Boolean).join(' ');
+        return <span>{fullName || user.username || 'Không rõ'}</span>;
+      },
+    },
+    {
       title: 'Thời gian',
       dataIndex: 'time',
       key: 'time',

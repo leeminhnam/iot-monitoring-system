@@ -40,8 +40,7 @@ export default function LoginPage() {
       }
     } catch (error) {
       console.error('Lỗi đăng nhập:', error);
-      const errorMsg = error.response?.data?.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin!';
-      message.error(errorMsg);
+      message.error(error.response?.data?.message || 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin!');
     } finally {
       setLoading(false);
     }

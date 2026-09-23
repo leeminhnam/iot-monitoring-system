@@ -8,7 +8,7 @@ function MainLayout() {
   let title = "Hệ thống IoT";
   if (location.pathname === '/account') title = "Tài khoản";
   else if (location.pathname === '/sensors') title = "Giá trị cảm biến";
-  else if (location.pathname === '/overview') title = "Tổng quan";
+  else if (location.pathname === '/') title = "Tổng quan";
   else if (location.pathname === '/history') title = "Lịch sử thiết bị";
 
   return (

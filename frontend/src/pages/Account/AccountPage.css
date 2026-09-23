@@ -107,19 +107,25 @@
 }
 
 .link-item {
-  display: flex;
+  display: flex !important;
   align-items: center;
-  padding: 20px 24px;
-  background-color: #1e253c;
-  border-radius: 12px;
+  padding: 20px 24px !important;
+  background-color: #1e253c !important;
+  border-radius: 12px !important;
   text-decoration: none;
   transition: all 0.3s ease;
-  border: 1px solid transparent;
+  border: 1px solid transparent !important;
+  height: auto !important;
+  width: 100%;
+  text-align: left;
+  white-space: normal !important;
+  color: inherit !important;
 }
 
 .link-item:hover {
-  background-color: #242c47;
-  border-color: rgba(0, 229, 255, 0.2);
+  background-color: #242c47 !important;
+  border-color: rgba(0, 229, 255, 0.2) !important;
+  color: inherit !important;
 }
 
 .link-icon-wrapper {

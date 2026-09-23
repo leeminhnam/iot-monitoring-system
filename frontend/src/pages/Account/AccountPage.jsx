@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from 'antd';
 import {
   UserOutlined,
   GithubOutlined,
@@ -59,7 +60,13 @@ export default function AccountPage() {
           <h3 className="links-title">Liên kết dự án & Tài liệu</h3>
 
           <div className="links-list">
-            <a href="https://github.com/leeminhnam/iot-monitoring-system" target="_blank" rel="noopener noreferrer" className="link-item">
+            <Button
+              type="text"
+              className="link-item"
+              href="https://github.com/leeminhnam/iot-monitoring-system"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <div className="link-icon-wrapper">
                 <GithubOutlined />
               </div>
@@ -67,9 +74,15 @@ export default function AccountPage() {
                 <span className="link-name">GitHub Repository</span>
                 <span className="link-url">leeminhnam/iot-monitoring-system</span>
               </div>
-            </a>
+            </Button>
 
-            <a href="https://www.figma.com/design/RWWbEoOyNutxmsuOjG8KZ0/IoT-Device-Monitoring-Dashboard?node-id=1559-412&p=f&t=cmB8tENHGflmpjCJ-0" target="_blank" rel="noopener noreferrer" className="link-item">
+            <Button
+              type="text"
+              className="link-item"
+              href="https://www.figma.com/design/RWWbEoOyNutxmsuOjG8KZ0/IoT-Device-Monitoring-Dashboard?node-id=1559-412&p=f&t=cmB8tENHGflmpjCJ-0"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <div className="link-icon-wrapper">
                 <FormatPainterOutlined />
               </div>
@@ -77,9 +90,15 @@ export default function AccountPage() {
                 <span className="link-name">Figma Design Mockup</span>
                 <span className="link-url">figma.com - IoT Device Monitoring Dashboard</span>
               </div>
-            </a>
+            </Button>
 
-            <a href="https://solar-flare-6446.postman.co/workspace/L%C3%AA-Minh-Nam's-Workspace~1167b716-db01-43e1-8e11-a352395bf5de/collection/58276532-f04bfa21-699d-46e7-84be-aad025aae099?action=share&creator=58276532" target="_blank" rel="noopener noreferrer" className="link-item">
+            <Button
+              type="text"
+              className="link-item"
+              href="https://solar-flare-6446.postman.co/workspace/L%C3%AA-Minh-Nam's-Workspace~1167b716-db01-43e1-8e11-a352395bf5de/collection/58276532-f04bfa21-699d-46e7-84be-aad025aae099?action=share&creator=58276532"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <div className="link-icon-wrapper">
                 <SendOutlined />
               </div>
@@ -87,9 +106,15 @@ export default function AccountPage() {
                 <span className="link-name">Postman API Docs</span>
                 <span className="link-url">postman.com - IoT Monitoring API Collection</span>
               </div>
-            </a>
+            </Button>
 
-            <a href="/iot-report-2026.pdf" target="_blank" rel="noopener noreferrer" className="link-item">
+            <Button
+              type="text"
+              className="link-item"
+              href="/iot-report-2026.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <div className="link-icon-wrapper">
                 <BookOutlined />
               </div>
@@ -97,7 +122,7 @@ export default function AccountPage() {
                 <span className="link-name">Báo cáo tiểu luận PDF</span>
                 <span className="link-url">iot-report-2026.pdf</span>
               </div>
-            </a>
+            </Button>
           </div>
         </div>
       </div>

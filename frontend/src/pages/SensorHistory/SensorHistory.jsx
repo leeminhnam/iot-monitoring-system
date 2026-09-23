@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Select, Table, Input, message } from 'antd';
 import { io } from 'socket.io-client';
 import sensorApi from '../../services/sensorApi';

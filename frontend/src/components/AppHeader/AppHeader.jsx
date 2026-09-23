@@ -1,4 +1,4 @@
-import { BellOutlined, UserOutlined, LogoutOutlined, ProfileOutlined } from '@ant-design/icons';
+import { BellOutlined, LogoutOutlined, ProfileOutlined } from '@ant-design/icons';
 import { Dropdown, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import useUser from '../../hooks/useUser';
@@ -53,7 +53,7 @@ const AppHeader = ({ title = 'Giá trị cảm biến' }) => {
 
           <Dropdown menu={{ items }} trigger={['click']} placement="bottomRight">
             <div className="user-avatar">
-              <UserOutlined />
+              <img src="/avatar.jpg" alt="Avatar" className="header-avatar-img" />
             </div>
           </Dropdown>
         </div>

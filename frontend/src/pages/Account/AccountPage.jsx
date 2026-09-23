@@ -1,7 +1,6 @@
 import React from 'react';
 import { Button } from 'antd';
 import {
-  UserOutlined,
   GithubOutlined,
   FormatPainterOutlined,
   SendOutlined,
@@ -33,7 +32,7 @@ export default function AccountPage() {
       <div className="account-col-left">
         <div className="account-card avatar-card">
           <div className="avatar-circle">
-            <UserOutlined />
+            <img src="/avatar.jpg" alt="Avatar" className="avatar-img" />
           </div>
           <h2 className="avatar-name">{displayUser.fullName}</h2>
           <p className="avatar-school">{displayUser.school}</p>

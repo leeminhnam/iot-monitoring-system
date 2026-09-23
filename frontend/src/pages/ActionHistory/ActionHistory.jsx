@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Table, Select, message } from 'antd';
 import { io } from 'socket.io-client';
 import actionApi from '../../services/actionApi';
-import deviceApi from '../../services/deviceApi';
 import './ActionHistory.css';
 
 export default function ActionHistory() {
@@ -12,26 +11,13 @@ export default function ActionHistory() {
   const [limit, setLimit] = useState(5);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [devices, setDevices] = useState([]);
 
   const [filters, setFilters] = useState({
     time: '',
-    deviceId: '',
+    deviceName: '',
     status: '',
     action: ''
   });
-
-  useEffect(() => {
-    const fetchDevices = async () => {
-      try {
-        const res = await deviceApi.getDevices();
-        setDevices(res.data || []);
-      } catch {
-        // silently ignore — filter just won't have device options
-      }
-    };
-    fetchDevices();
-  }, []);
 
   const fetchData = async () => {
     try {
@@ -40,7 +26,7 @@ export default function ActionHistory() {
         page,
         limit,
         ...(filters.time && { time: filters.time }),
-        ...(filters.deviceId && { deviceId: filters.deviceId }),
+        ...(filters.deviceName && { deviceName: filters.deviceName }),
         ...(filters.status && { status: filters.status }),
         ...(filters.action && { action: filters.action })
       };
@@ -66,7 +52,7 @@ export default function ActionHistory() {
     const socket = io('http://localhost:8080');
 
     socket.on('action_update', (newAction) => {
-      const hasFilter = filters.time || filters.deviceId || filters.status || filters.action;
+      const hasFilter = filters.time || filters.deviceName || filters.status || filters.action;
       if (page !== 1 || hasFilter) return;
 
       setData(prev => {
@@ -165,13 +151,13 @@ export default function ActionHistory() {
   return (
     <div className="action-history-container">
       <div className="filters-row">
-        <Select
-          className="filter-select"
-          placeholder="Chọn thiết bị"
-          value={filters.deviceId || undefined}
-          allowClear
-          onChange={(value) => handleSelectChange('deviceId', value)}
-          options={devices.map(d => ({ value: d._id, label: d.name }))}
+        <input
+          type="text"
+          name="deviceName"
+          placeholder="Nhập tên thiết bị ..."
+          className="filter-input"
+          value={filters.deviceName}
+          onChange={handleFilterChange}
         />
 
         <Select

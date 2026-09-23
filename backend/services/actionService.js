@@ -1,6 +1,7 @@
 const Action = require('../models/action');
+const Device = require('../models/device');
 
-const getActionHistoryService = async ({ time, deviceId, status, action }, page = 1, limit = 10) => {
+const getActionHistoryService = async ({ time, deviceName, status, action }, page = 1, limit = 10) => {
   const query = {};
 
   if (time) {
@@ -19,8 +20,12 @@ const getActionHistoryService = async ({ time, deviceId, status, action }, page 
     };
   }
 
-  if (deviceId) {
-    query.deviceId = deviceId;
+  if (deviceName) {
+    const matchedDevices = await Device.find({
+      name: { $regex: deviceName, $options: 'i' }
+    }).select('_id');
+    const deviceIds = matchedDevices.map(d => d._id);
+    query.deviceId = { $in: deviceIds };
   }
 
   if (status) {

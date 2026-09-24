@@ -10,6 +10,30 @@ import './Dashboard.css';
 
 const { Title, Text } = Typography;
 
+const getTemperatureStatus = (value) => {
+  if (value <= 0) return { label: 'Rất lạnh', color: '#00bcd4' };
+  if (value <= 15) return { label: 'Lạnh', color: '#29b6f6' };
+  if (value <= 25) return { label: 'Bình thường', color: '#66bb6a' };
+  if (value <= 35) return { label: 'Nóng', color: '#ff9f43' };
+  return { label: 'Rất nóng', color: '#f44336' };
+};
+
+const getHumidityStatus = (value) => {
+  if (value <= 20) return { label: 'Rất khô', color: '#f44336' };
+  if (value <= 40) return { label: 'Khô', color: '#ff9f43' };
+  if (value <= 70) return { label: 'Dịu nhẹ', color: '#66bb6a' };
+  if (value <= 85) return { label: 'Ẩm', color: '#29b6f6' };
+  return { label: 'Rất ẩm', color: '#00bcd4' };
+};
+
+const getLightStatus = (value) => {
+  if (value <= 50) return { label: 'Rất tối', color: '#9e9e9e' };
+  if (value <= 200) return { label: 'Tối', color: '#ff9f43' };
+  if (value <= 500) return { label: 'Đủ sáng', color: '#66bb6a' };
+  if (value <= 800) return { label: 'Sáng', color: '#ffd700' };
+  return { label: 'Rất sáng', color: '#ffeb3b' };
+};
+
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [currentData, setCurrentData] = useState({
@@ -205,8 +229,8 @@ const Dashboard = () => {
               <span className="unit">°C</span>
             </div>
             <div className="stat-footer">
-              <div className="indicator dot-temp"></div>
-              <Text style={{ color: '#8c8c8c', marginLeft: 8 }}>Bình thường</Text>
+              <div className="indicator" style={{ backgroundColor: getTemperatureStatus(currentData.temperature).color }}></div>
+              <Text style={{ color: '#8c8c8c', marginLeft: 8 }}>{getTemperatureStatus(currentData.temperature).label}</Text>
             </div>
           </Card>
         </Col>
@@ -222,8 +246,8 @@ const Dashboard = () => {
               <span className="unit">%</span>
             </div>
             <div className="stat-footer">
-              <div className="indicator dot-humid"></div>
-              <Text style={{ color: '#8c8c8c', marginLeft: 8 }}>Dịu nhẹ</Text>
+              <div className="indicator" style={{ backgroundColor: getHumidityStatus(currentData.humidity).color }}></div>
+              <Text style={{ color: '#8c8c8c', marginLeft: 8 }}>{getHumidityStatus(currentData.humidity).label}</Text>
             </div>
           </Card>
         </Col>
@@ -239,8 +263,8 @@ const Dashboard = () => {
               <span className="unit">lux</span>
             </div>
             <div className="stat-footer">
-              <div className="indicator dot-light"></div>
-              <Text style={{ color: '#8c8c8c', marginLeft: 8 }}>Đủ sáng</Text>
+              <div className="indicator" style={{ backgroundColor: getLightStatus(currentData.light).color }}></div>
+              <Text style={{ color: '#8c8c8c', marginLeft: 8 }}>{getLightStatus(currentData.light).label}</Text>
             </div>
           </Card>
         </Col>
@@ -277,7 +301,7 @@ const Dashboard = () => {
           <Card
             className="device-card"
             bordered={false}
-            title={<Text style={{ color: '#fff', fontSize: '16px' }}>Hệ thống Đèn</Text>}
+            title={<Text style={{ color: '#fff', fontSize: '16px' }}>Hệ thống đèn</Text>}
           >
             <div className="device-list">
               {devices.length === 0 ? (

@@ -77,18 +77,6 @@
   border-radius: 50%;
 }
 
-.dot-temp {
-  background-color: #ff9f43;
-}
-
-.dot-humid {
-  background-color: #00e5ff;
-}
-
-.dot-light {
-  background-color: #ffd700;
-}
-
 /* Biểu đồ & Đèn */
 .main-content-row {
   flex: 1;

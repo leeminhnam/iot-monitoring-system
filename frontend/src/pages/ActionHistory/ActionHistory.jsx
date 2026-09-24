@@ -148,10 +148,6 @@ export default function ActionHistory() {
         const { text, color } = getStatusConfig(status);
         return (
           <div className="status-cell">
-            <span
-              className="status-dot"
-              style={{ backgroundColor: color }}
-            ></span>
             <span style={{ color: color }}>{text}</span>
           </div>
         );

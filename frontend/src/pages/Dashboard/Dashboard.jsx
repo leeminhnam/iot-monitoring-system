@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Row, Col, Switch, Typography, message, Spin } from 'antd';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { FireOutlined, CloudOutlined, BulbOutlined } from '@ant-design/icons';
+import { FireOutlined, CloudOutlined, BulbOutlined, BulbFilled } from '@ant-design/icons';
 import { io } from 'socket.io-client';
 import sensorApi from '../../services/sensorApi';
 import deviceApi from '../../services/deviceApi';
@@ -318,7 +318,12 @@ const Dashboard = () => {
                 devices.map((device, index) => (
                   <div className="device-item" key={device._id}>
                     <div className="device-info">
-                      <Text style={{ color: '#fff', fontSize: '15px' }}>{device.name || `Đèn ${index + 1}`}</Text>
+                      <Text style={{ color: '#fff', fontSize: '15px' }}>
+                        {device.name || `Đèn ${index + 1}`}
+                        {device.status === 'on' && (
+                          <BulbFilled style={{ color: '#ffd700', marginLeft: 8, fontSize: '14px' }} />
+                        )}
+                      </Text>
                       <Text style={{ color: '#8c8c8c', fontSize: '12px', display: 'block' }}>
                         {device.status === 'on' ? 'Đang bật' : 'Đang tắt'}
                       </Text>

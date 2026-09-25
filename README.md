@@ -21,11 +21,41 @@ Hệ thống IoT giám sát các chỉ số môi trường (Nhiệt độ, Độ
 
 ```text
 iot-monitoring-system/
-│── frontend/        # React UI (Giao diện người dùng)
-│── backend/         # NodeJS API + MongoDB + Socket.io + MQTT Client
-│── firmware/        # Mã nguồn nạp cho vi điều khiển ESP8266
-│── package.json     # Chứa script khởi chạy FE + BE cùng lúc
-│── README.md        # Tài liệu hướng dẫn dự án
+│── frontend/                          # React UI (Giao diện người dùng)
+│   │── public/                        # Tài nguyên tĩnh (static assets)
+│   │── src/                           # Mã nguồn chính của React
+│   │   │── assets/                    # Hình ảnh & tài nguyên
+│   │   │── components/                # Các component tái sử dụng
+│   │   │── hooks/                     # Custom React Hooks
+│   │   │── pages/                     # Các trang của ứng dụng
+│   │   │── services/                  # Các API service (gọi Backend)
+│   │   │── utils/                     # Hàm tiện ích
+│   │   │── styles/                    # Thư mục style chung
+│   │   │── App.jsx                    # Component gốc, cấu hình Router
+│   │   │── main.jsx                   # Entry point (ReactDOM.render)
+│   │   └── index.css                  # Style global (reset, font,...)
+│   │── index.html                     # File HTML gốc (Vite entry)
+│   │── package.json                   # Dependencies & scripts frontend
+│   │── package-lock.json              # Lock file dependencies
+│   │── vite.config.js                 # Cấu hình Vite (proxy, port,...)
+│   │── eslint.config.js               # Cấu hình ESLint
+│   └── .gitignore                     # Danh sách file/folder bỏ qua bởi Git
+│── backend/                           # NodeJS API + MongoDB + Socket.io + MQTT Client
+│   │── controllers/                   # Xử lý logic request/response
+│   │── models/                        # Mongoose Schema (cấu trúc dữ liệu MongoDB)
+│   │── routes/                        # Định nghĩa API endpoints
+│   │── services/                      # Business logic & tích hợp bên ngoài
+│   │── middlewares/                   # Middleware xử lý trung gian
+│   │── utils/                         # Hàm tiện ích dùng chung
+│   │── scripts/                       # Script tiện ích
+│   │── server.js                      # Entry point backend (khởi tạo Express, MongoDB, MQTT, Socket.io)
+│   │── package.json                   # Dependencies & scripts backend
+│   │── package-lock.json              # Lock file dependencies
+│   └── .env                           # Biến môi trường (DB_URL, JWT secret, MQTT config)
+│── firmware/                          # Mã nguồn nạp cho vi điều khiển ESP8266
+│   └── esp8266_firmware/              # Thư mục project firmware
+│── package.json                       # Chứa script khởi chạy FE + BE cùng lúc
+│── README.md                          # Tài liệu hướng dẫn dự án
 ```
 
 ---

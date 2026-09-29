@@ -116,3 +116,41 @@ npm run dev
 Sau khi terminal hiển thị thông báo chạy thành công:
 - **Frontend (Giao diện UI):** http://localhost:5173
 - **Backend (API Server):** http://localhost:3001
+
+---
+
+## 6. Hướng dẫn nạp code cho NodeMCU (ESP8266)
+
+Để chạy được phần cứng gửi dữ liệu lên hệ thống, bạn cần nạp code (firmware) cho mạch NodeMCU ESP8266.
+
+**Bước 1: Cài đặt Arduino IDE và Board ESP8266**
+1. Tải và cài đặt [Arduino IDE](https://www.arduino.cc/en/software).
+2. Mở Arduino IDE, vào **File -> Preferences**. Ở mục **Additional Boards Manager URLs**, thêm đường dẫn sau:
+   `http://arduino.esp8266.com/stable/package_esp8266com_index.json`
+3. Vào **Tools -> Board -> Boards Manager**, tìm kiếm từ khóa `esp8266` và bấm **Install**.
+
+**Bước 2: Cài đặt thư viện**
+Vào **Sketch -> Include Library -> Manage Libraries** và cài đặt các thư viện sau:
+- **PubSubClient** (bởi Nick O'Leary) - Dùng để kết nối MQTT.
+- **DHT sensor library** (bởi Adafruit) - Đọc dữ liệu cảm biến DHT.
+- **Adafruit Unified Sensor** - Thư viện nền tảng bắt buộc của Adafruit.
+
+**Bước 3: Mở project và cấu hình mạng**
+1. Dùng Arduino IDE mở file `firmware/esp8266_firmware/ESP8266_Project.ino/ESP8266_Project/ESP8266_Project.ino`.
+2. Chỉnh sửa thông số Wi-Fi và MQTT trong file `ESP8266_Project.ino` cho đúng với mạng của bạn:
+   ```cpp
+   // Cấu hình Wi-Fi
+   const char* WIFI_SSID = "TEN_WIFI_CUA_BAN";
+   const char* WIFI_PASSWORD = "MAT_KHAU_WIFI";
+   
+   // Cấu hình MQTT (Thay bằng IP LAN của máy tính chạy Backend / MQTT Broker)
+   const char* MQTT_SERVER = "192.168.x.x"; 
+   const int MQTT_PORT = 1883;
+   ```
+
+**Bước 4: Biên dịch và nạp code**
+1. Kết nối mạch NodeMCU vào máy tính qua cáp USB.
+2. Vào **Tools -> Board**, chọn **NodeMCU 1.0 (ESP-12E Module)**.
+3. Vào **Tools -> Port**, chọn cổng COM tương ứng với mạch (ví dụ COM3, COM4).
+4. Bấm nút **Upload** (mũi tên hướng sang phải) và chờ đến khi nạp xong (báo `Done uploading`).
+5. Bạn có thể mở **Serial Monitor** (biểu tượng kính lúp góc phải) với baudrate `115200` để xem log quá trình mạch kết nối Wi-Fi và MQTT.

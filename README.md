@@ -77,7 +77,7 @@ Trước khi khởi chạy hệ thống, bạn cần cấu hình các biến mô
 
 ```env
 # URL kết nối đến cơ sở dữ liệu MongoDB (cục bộ hoặc MongoDB Atlas)
-DB_URL=mongodb://127.0.0.1:27017/iot_monitoring_db
+DB_URL=your_db_url
 
 # Khóa bí mật dùng để mã hóa và xác thực JWT token
 secretKey=your_secret_key_here
@@ -106,7 +106,21 @@ Tại thư mục gốc của dự án (`iot-monitoring-system`), chạy lệnh s
 npm install
 ```
 
-**Bước 2: Chạy đồng thời Frontend và Backend**
+**Bước 2: Khởi tạo dữ liệu ban đầu (chỉ cần chạy một lần)**
+Script `resetDatabase.js` sẽ xóa toàn bộ dữ liệu cũ và tạo lại dữ liệu mặc định bao gồm: danh sách thiết bị (Led 1, Led 2, Led 3), danh sách cảm biến (DHT11, BH1750) và tài khoản đăng nhập mặc định.
+```bash
+cd backend
+node scripts/resetDatabase.js
+cd ..
+```
+
+> **Tài khoản đăng nhập mặc định:**
+> - **Username:** `B23DCCN579`
+> - **Password:** `12345678`
+
+*(Lưu ý: Mỗi lần chạy lại script này sẽ **xóa toàn bộ** dữ liệu hiện có trong database và khôi phục về trạng thái ban đầu. Chỉ nên chạy khi thiết lập lần đầu hoặc muốn reset dữ liệu.)*
+
+**Bước 3: Chạy đồng thời Frontend và Backend**
 Vẫn ở thư mục gốc của dự án, dùng lệnh sau:
 ```bash
 npm run dev
@@ -115,7 +129,7 @@ npm run dev
 **Truy cập ứng dụng:**
 Sau khi terminal hiển thị thông báo chạy thành công:
 - **Frontend (Giao diện UI):** http://localhost:5173
-- **Backend (API Server):** http://localhost:3001
+- **Backend (API Server):** http://localhost:8080
 
 ---
 

@@ -4,7 +4,7 @@ const { publishControl } = require('./mqttService');
 const { getIo } = require('./socketService');
 
 const getDevicesWithStatusService = async () => {
-  const devices = await Device.find();
+  const devices = await Device.find().sort({ id: 1 });
   const result = [];
 
   for (let device of devices) {

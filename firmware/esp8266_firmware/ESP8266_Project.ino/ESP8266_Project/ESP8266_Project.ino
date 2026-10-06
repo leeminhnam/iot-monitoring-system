@@ -88,6 +88,9 @@ void reconnectMQTT() {
   }
 }
 
+unsigned long lastSensorReadTime = 0;
+const unsigned long SENSOR_READ_INTERVAL = 2000;
+
 // LOOP
 void loop() {
   if (!mqttClient.connected()) {
@@ -95,6 +98,9 @@ void loop() {
   }
   mqttClient.loop();
 
-  readSensors();
-  delay(2000);
+  unsigned long currentMillis = millis();
+  if (currentMillis - lastSensorReadTime >= SENSOR_READ_INTERVAL) {
+    lastSensorReadTime = currentMillis;
+    readSensors();
+  }
 }

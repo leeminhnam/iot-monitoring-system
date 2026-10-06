@@ -19,7 +19,7 @@ export default function AccountPage() {
   const displayUser = {
     fullName: defaultUser.fullName,
     studentId: defaultUser.studentId,
-    className:defaultUser.className,
+    className: defaultUser.className,
     school: defaultUser.school,
   };
 
@@ -94,7 +94,7 @@ export default function AccountPage() {
             <Button
               type="text"
               className="link-item"
-              href="https://solar-flare-6446.postman.co/workspace/L%C3%AA-Minh-Nam's-Workspace~1167b716-db01-43e1-8e11-a352395bf5de/collection/58276532-f04bfa21-699d-46e7-84be-aad025aae099?action=share&creator=58276532"
+              href="https://www.postman.com/solar-flare-6446/workspace/iot-monitoring-system/collection/58276532-f04bfa21-699d-46e7-84be-aad025aae099?action=share&creator=58276532"
               target="_blank"
               rel="noopener noreferrer"
             >

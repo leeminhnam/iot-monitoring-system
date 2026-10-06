@@ -57,7 +57,7 @@ export default function SensorHistory() {
   };
 
   useEffect(() => {
-    const socket = io('http://localhost:8080');
+    const socket = io('http://localhost:3001');
 
     socket.on('sensor_data_new', (newRecords) => {
       const hasFilter = filters.time || filters.sensorType || filters.value;

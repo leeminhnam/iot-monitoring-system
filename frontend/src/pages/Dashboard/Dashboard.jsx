@@ -92,7 +92,7 @@ const Dashboard = () => {
 
     fetchDashboardData();
 
-    const socket = io('http://localhost:8080');
+    const socket = io('http://localhost:3001');
 
     let fallbackInterval = null;
 
@@ -196,7 +196,7 @@ const Dashboard = () => {
 
         if (targetDevice && targetDevice.loading) {
           const deviceName = targetDevice.name || 'Thiết bị';
-          message.error(`Không nhận được phản hồi từ ${deviceName} sau 5 giây`);
+          message.error(`Không nhận được phản hồi từ ${deviceName}`);
           setDevices(prev => prev.map(d => d._id === deviceId ? { ...d, loading: false } : d));
         }
       }, 5000);

@@ -44,8 +44,8 @@ mongoose.connect(process.env.DB_URL)
     .then(() => {
         console.log("Đã kết nối thành công tới MongoDB Atlas!");
 
-        server.listen(8080, () => {
-            console.log("Server đang lắng nghe trên cổng 8080");
+        server.listen(3001, () => {
+            console.log("Server đang lắng nghe trên cổng 3001");
         });
     })
     .catch((error) => {

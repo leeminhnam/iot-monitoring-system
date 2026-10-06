@@ -66,7 +66,7 @@ export default function ActionHistory() {
   }, []);
 
   useEffect(() => {
-    const socket = io('http://localhost:8080');
+    const socket = io('http://localhost:3001');
 
     socket.on('action_update', (newAction) => {
       const hasFilter = filters.time || filters.deviceName || filters.status || filters.action;

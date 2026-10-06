@@ -129,7 +129,7 @@ npm run dev
 **Truy cập ứng dụng:**
 Sau khi terminal hiển thị thông báo chạy thành công:
 - **Frontend (Giao diện UI):** http://localhost:5173
-- **Backend (API Server):** http://localhost:8080
+- **Backend (API Server):** http://localhost:3001
 
 ---
 

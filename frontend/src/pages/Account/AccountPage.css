@@ -3,7 +3,7 @@
   gap: 24px;
   color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  max-width: 1200px;
+  width: 100%;
 }
 
 .account-col-left {
@@ -11,14 +11,14 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  min-width: 300px;
+  min-width: 0;
 }
 
 .account-col-right {
   flex: 1.5;
   display: flex;
   flex-direction: column;
-  min-width: 400px;
+  min-width: 0;
 }
 
 .account-card {
@@ -90,10 +90,6 @@
 }
 
 /* Links Card */
-.links-card {
-  padding: 32px;
-}
-
 .links-title {
   font-size: 18px;
   font-weight: 600;
@@ -171,7 +167,16 @@
     flex-direction: column;
   }
 
-  .account-col-right {
-    min-width: 100%;
+  .account-card {
+    padding: 20px;
+  }
+
+  .avatar-card {
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+
+  .link-item {
+    padding: 16px !important;
   }
 }

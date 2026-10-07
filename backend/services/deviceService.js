@@ -5,9 +5,8 @@ const { getIo } = require('./socketService');
 
 const getDevicesWithStatusService = async () => {
   const devices = await Device.find().sort({ id: 1 });
-  const result = [];
 
-  for (let device of devices) {
+  const result = await Promise.all(devices.map(async (device) => {
     const lastAction = await Action.findOne({
       deviceId: device._id,
       status: { $in: ["success"] }
@@ -19,19 +18,21 @@ const getDevicesWithStatusService = async () => {
       if (lastAction.action === "turn_off") currentStatus = "off";
     }
 
-    result.push({
+    return {
       _id: device._id,
       id: device.id,
       name: device.name,
       status: currentStatus
-    });
-  }
+    };
+  }));
 
   return result;
 };
 
 const toggleDeviceService = async (deviceId, action, userId) => {
-  const device = await Device.findById(deviceId);
+  const allDevices = await Device.find();
+  const device = allDevices.find(d => d._id.toString() === deviceId.toString());
+
   if (!device) {
     return null;
   }
@@ -48,14 +49,17 @@ const toggleDeviceService = async (deviceId, action, userId) => {
 
   const io = getIo();
   if (io) {
-    const populatedAction = await Action.findById(newAction._id).populate('deviceId', 'name');
+    // Tránh query DB để populate, tự tạo object
+    const populatedAction = {
+      ...newAction.toObject(),
+      deviceId: { _id: device._id, name: device.name }
+    };
     io.emit("action_update", populatedAction);
   }
 
-  const allDevices = await Device.find();
   const controlPayload = {};
 
-  for (let d of allDevices) {
+  await Promise.all(allDevices.map(async (d) => {
     if (d._id.toString() === device._id.toString()) {
       controlPayload[d.id] = action === "turn_on" ? "ON" : "OFF";
       controlPayload[d.id + ":" + (action === "turn_on" ? "ON" : "OFF")] = true;
@@ -65,8 +69,9 @@ const toggleDeviceService = async (deviceId, action, userId) => {
       if (last && (last.action === "turn_on")) st = "ON";
       controlPayload[d.id] = st;
     }
-  }
+  }));
 
+  // Gửi MQTT ngay sau khi tính toán xong
   publishControl(controlPayload);
 
   setTimeout(async () => {
@@ -78,7 +83,10 @@ const toggleDeviceService = async (deviceId, action, userId) => {
 
         const io = getIo();
         if (io) {
-          const populatedFailedAction = await Action.findById(newAction._id).populate('deviceId', 'name');
+          const populatedFailedAction = {
+            ...checkAction.toObject(),
+            deviceId: { _id: device._id, name: device.name }
+          };
           io.emit("action_update", populatedFailedAction);
         }
       }

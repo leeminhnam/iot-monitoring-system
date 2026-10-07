@@ -56,22 +56,17 @@ const initMqtt = async () => {
           { value: data.temperature, type: "temperature" },
           { value: data.humidity, type: "humidity" },
           { value: data.light, type: "light" }
-        ];
+        ].filter(r => r.value !== undefined);
 
-        const newRecords = [];
-        for (let i = 0; i < records.length; i++) {
-          const r = records[i];
-          if (r.value !== undefined) {
-            const created = await SensorData.create({
-              id: commonIdPrefix + i,
-              sensorId: sensorCache[SENSOR_TYPE_MAP[r.type]],
-              sensorType: r.type,
-              value: r.value,
-              time: currentTime
-            });
-            newRecords.push(created);
-          }
-        }
+        const newRecords = await Promise.all(records.map(async (r, i) => {
+          return await SensorData.create({
+            id: commonIdPrefix + i,
+            sensorId: sensorCache[SENSOR_TYPE_MAP[r.type]],
+            sensorType: r.type,
+            value: r.value,
+            time: currentTime
+          });
+        }));
 
         const io = getIo();
         if (io) {
@@ -88,69 +83,77 @@ const initMqtt = async () => {
         console.log("Phản hồi từ thiết bị:", data);
 
         const devices = await Device.find();
-        for (let dev of devices) {
-          const state = data[dev.id]; 
-          if (state) {
-            const actionStatus = state === "ON" ? "turn_on" : "turn_off";
 
-            const pendingAction = await Action.findOne({
-              deviceId: dev._id,
-              status: "pending",
-              action: actionStatus
-            }).sort({ time: -1 });
+        await Promise.all(devices.map(async (dev) => {
+          const state = data[dev.id];
+          if (!state) return;
 
-            if (pendingAction) {
-              pendingAction.status = "success";
-              await pendingAction.save();
+          const actionStatus = state === "ON" ? "turn_on" : "turn_off";
 
-              const populatedAction = await Action.findById(pendingAction._id).populate('deviceId', 'name');
+          const pendingAction = await Action.findOne({
+            deviceId: dev._id,
+            status: "pending",
+            action: actionStatus
+          }).sort({ time: -1 });
 
-              const io = getIo();
-              if (io) {
-                io.emit("device_update", {
-                  id: dev.id,
-                  _id: dev._id,
-                  status: state === "ON" ? "on" : "off"
-                });
-                io.emit("action_update", populatedAction);
-              }
-            } else {
-              const lastAction = await Action.findOne({ deviceId: dev._id, status: { $in: ["success", "on", "off"] } }).sort({ time: -1 });
-              let currentDbState = "OFF";
-              if (lastAction && (lastAction.action === "turn_on")) {
-                 currentDbState = "ON";
-              }
-              if (currentDbState !== state) {
-                 const User = require("../models/user");
-                 const defaultUser = await User.findOne();
-                 if (!defaultUser) {
-                   console.warn("Không tìm thấy user mặc định, bỏ qua tạo action");
-                   continue;
-                 }
-                 const newAction = await Action.create({
-                   id: Date.now().toString(),
-                   userId: defaultUser?._id,
-                   deviceId: dev._id,
-                   action: state === "ON" ? "turn_on" : "turn_off",
-                   status: "success",
-                   time: new Date()
+          if (pendingAction) {
+            pendingAction.status = "success";
+            await pendingAction.save();
+
+            // Khởi tạo populated object thay vì truy vấn db lại
+            const populatedAction = {
+              ...pendingAction.toObject(),
+              deviceId: { _id: dev._id, name: dev.name }
+            };
+
+            const io = getIo();
+            if (io) {
+              io.emit("device_update", {
+                id: dev.id,
+                _id: dev._id,
+                status: state === "ON" ? "on" : "off"
+              });
+              io.emit("action_update", populatedAction);
+            }
+          } else {
+            const lastAction = await Action.findOne({ deviceId: dev._id, status: { $in: ["success", "on", "off"] } }).sort({ time: -1 });
+            let currentDbState = "OFF";
+            if (lastAction && (lastAction.action === "turn_on")) {
+               currentDbState = "ON";
+            }
+            if (currentDbState !== state) {
+               const User = require("../models/user");
+               const defaultUser = await User.findOne();
+               if (!defaultUser) {
+                 console.warn("Không tìm thấy user mặc định, bỏ qua tạo action");
+                 return;
+               }
+               const newAction = await Action.create({
+                 id: Date.now().toString(),
+                 userId: defaultUser?._id,
+                 deviceId: dev._id,
+                 action: state === "ON" ? "turn_on" : "turn_off",
+                 status: "success",
+                 time: new Date()
+               });
+
+               const populatedAction = {
+                 ...newAction.toObject(),
+                 deviceId: { _id: dev._id, name: dev.name }
+               };
+
+               const io = getIo();
+               if (io) {
+                 io.emit("device_update", {
+                   id: dev.id,
+                   _id: dev._id,
+                   status: state === "ON" ? "on" : "off"
                  });
-
-                 const populatedAction = await Action.findById(newAction._id).populate('deviceId', 'name');
-
-                 const io = getIo();
-                 if (io) {
-                   io.emit("device_update", {
-                     id: dev.id,
-                     _id: dev._id,
-                     status: state === "ON" ? "on" : "off"
-                   });
-                   io.emit("action_update", populatedAction);
-                 }
-              }
+                 io.emit("action_update", populatedAction);
+               }
             }
           }
-        }
+        }));
       }
     } catch (err) {
       console.error("Lỗi khi xử lý tin nhắn MQTT trên topic", topic, ":", err.message);

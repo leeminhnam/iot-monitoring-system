@@ -40,13 +40,12 @@ const getSensorDataService = async ({ time, sensorType, value }, page = 1, limit
 
   const skip = (page - 1) * limit;
 
-  // Build sort object
   const sortObj = {};
   const allowedSortFields = ['value', 'time', 'sensorType'];
   if (sort.sortBy && allowedSortFields.includes(sort.sortBy)) {
     sortObj[sort.sortBy] = sort.sortOrder === 'asc' ? 1 : -1;
   } else {
-    sortObj.time = -1; // default sort
+    sortObj.time = -1; 
   }
 
   const data = await SensorData.find(query)

@@ -100,7 +100,6 @@ const initMqtt = async () => {
             pendingAction.status = "success";
             await pendingAction.save();
 
-            // Khởi tạo populated object thay vì truy vấn db lại
             const populatedAction = {
               ...pendingAction.toObject(),
               deviceId: { _id: dev._id, name: dev.name }

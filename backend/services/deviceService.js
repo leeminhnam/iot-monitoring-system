@@ -49,7 +49,6 @@ const toggleDeviceService = async (deviceId, action, userId) => {
 
   const io = getIo();
   if (io) {
-    // Tránh query DB để populate, tự tạo object
     const populatedAction = {
       ...newAction.toObject(),
       deviceId: { _id: device._id, name: device.name }
@@ -71,7 +70,6 @@ const toggleDeviceService = async (deviceId, action, userId) => {
     }
   }));
 
-  // Gửi MQTT ngay sau khi tính toán xong
   publishControl(controlPayload);
 
   setTimeout(async () => {

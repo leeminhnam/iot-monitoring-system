@@ -110,7 +110,7 @@ export default function AccountPage() {
             <Button
               type="text"
               className="link-item"
-              href="https://drive.google.com/file/d/1DyxtH7ZqlypRZqjLAw0s9eWmWz2nowxa/view?usp=sharing"
+              href="https://drive.google.com/file/d/1HUGUwvEDDWyyKI-gobsAYw5E48-lGGVA/view?usp=sharing"
               target="_blank"
               rel="noopener noreferrer"
             >

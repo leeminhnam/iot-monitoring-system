@@ -51,6 +51,20 @@ const Dashboard = () => {
   }, [devices]);
 
   useEffect(() => {
+    const TIMEOUT_SENSOR_MS = 10000;
+    let sensorWatchdog = null;
+
+    const resetSensorWatchdog = () => {
+      if (sensorWatchdog) clearTimeout(sensorWatchdog);
+      sensorWatchdog = setTimeout(() => {
+        setCurrentData({
+          temperature: 0,
+          humidity: 0,
+          light: 0
+        });
+      }, TIMEOUT_SENSOR_MS);
+    };
+
     const fetchDashboardData = async () => {
       const fetchChart = async () => {
         try {
@@ -70,17 +84,31 @@ const Dashboard = () => {
         }
       };
 
-        const fetchLatestSensor = async () => {
+      const fetchLatestSensor = async () => {
         try {
           const res = await sensorApi.getLatestSensorData();
           const arr = res.data;
           const parsed = { temperature: 0, humidity: 0, light: 0 };
+          const now = Date.now();
+          let hasRecentData = false;
+
           arr.forEach(item => {
-            if (item.sensorType === 'temperature') parsed.temperature = item.value;
-            else if (item.sensorType === 'humidity') parsed.humidity = item.value;
-            else if (item.sensorType === 'light') parsed.light = item.value;
+            const recordTime = new Date(item.time).getTime();
+            const isFresh = (now - recordTime) <= TIMEOUT_SENSOR_MS;
+
+            if (isFresh) {
+              hasRecentData = true;
+              if (item.sensorType === 'temperature') parsed.temperature = item.value;
+              else if (item.sensorType === 'humidity') parsed.humidity = item.value;
+              else if (item.sensorType === 'light') parsed.light = item.value;
+            }
           });
+
           setCurrentData(parsed);
+
+          if (hasRecentData) {
+            resetSensorWatchdog();
+          }
         } catch (err) {
           console.error("Lỗi khi lấy dữ liệu cảm biến mới nhất:", err);
         }
@@ -94,53 +122,32 @@ const Dashboard = () => {
 
     const socket = io('http://localhost:3001');
 
-    let fallbackInterval = null;
-
-    const startFallback = () => {
-      if (fallbackInterval) return;
-      fallbackInterval = setInterval(async () => {
-        try {
-          const res = await sensorApi.getLatestSensorData();
-          const arr = res.data;
-          const parsed = { temperature: 0, humidity: 0, light: 0 };
-          arr.forEach(item => {
-            if (item.sensorType === 'temperature') parsed.temperature = item.value;
-            else if (item.sensorType === 'humidity') parsed.humidity = item.value;
-            else if (item.sensorType === 'light') parsed.light = item.value;
-          });
-          setCurrentData(parsed);
-        } catch (err) {
-          console.error("Lỗi fallback lấy dữ liệu cảm biến:", err);
-        }
-      }, 10000);
-    };
-
-    const stopFallback = () => {
-      if (fallbackInterval) {
-        clearInterval(fallbackInterval);
-        fallbackInterval = null;
-      }
-    };
-
     socket.on('connect_error', () => {
-      startFallback();
+      if (sensorWatchdog) clearTimeout(sensorWatchdog);
+      setCurrentData({
+        temperature: 0,
+        humidity: 0,
+        light: 0
+      });
     });
 
     socket.on('disconnect', () => {
-      startFallback();
-    });
-
-    socket.on('connect', () => {
-      stopFallback();
+      if (sensorWatchdog) clearTimeout(sensorWatchdog);
+      setCurrentData({
+        temperature: 0,
+        humidity: 0,
+        light: 0
+      });
     });
 
     socket.on('sensor_update', (data) => {
-      stopFallback();
       setCurrentData({
         temperature: data.temperature || 0,
         humidity: data.humidity || 0,
         light: data.light || 0
       });
+
+      resetSensorWatchdog();
 
       setChartData(prev => {
         const newData = [...prev, {
@@ -173,12 +180,13 @@ const Dashboard = () => {
     });
 
     return () => {
-      stopFallback();
+      if (sensorWatchdog) clearTimeout(sensorWatchdog);
       socket.off('connect');
       socket.off('connect_error');
       socket.off('disconnect');
       socket.off('sensor_update');
       socket.off('device_update');
+      socket.disconnect();
     };
   }, []);
 

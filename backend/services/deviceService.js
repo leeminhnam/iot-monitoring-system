@@ -7,22 +7,44 @@ const getDevicesWithStatusService = async () => {
   const devices = await Device.find().sort({ id: 1 });
 
   const result = await Promise.all(devices.map(async (device) => {
-    const lastAction = await Action.findOne({
+    const latestAction = await Action.findOne({
+      deviceId: device._id
+    }).sort({ time: -1 });
+
+    const lastSuccessAction = await Action.findOne({
       deviceId: device._id,
       status: { $in: ["success"] }
     }).sort({ time: -1 });
 
     let currentStatus = "off";
-    if (lastAction) {
-      if (lastAction.action === "turn_on") currentStatus = "on";
-      if (lastAction.action === "turn_off") currentStatus = "off";
+    if (lastSuccessAction) {
+      if (lastSuccessAction.action === "turn_on") currentStatus = "on";
+      if (lastSuccessAction.action === "turn_off") currentStatus = "off";
+    }
+
+    const TIMEOUT_PENDING_MS = 5000;
+    let isPending = false;
+    let pendingAction = null;
+
+    if (latestAction && latestAction.status === "pending") {
+      const elapsed = Date.now() - new Date(latestAction.time).getTime();
+      if (elapsed <= TIMEOUT_PENDING_MS) {
+        isPending = true;
+        pendingAction = latestAction.action;
+      } else {
+        latestAction.status = "failed";
+        await latestAction.save();
+      }
     }
 
     return {
       _id: device._id,
       id: device.id,
       name: device.name,
-      status: currentStatus
+      status: isPending ? "pending" : currentStatus,
+      previousStatus: currentStatus,
+      pendingAction: pendingAction,
+      loading: isPending
     };
   }));
 
@@ -54,6 +76,13 @@ const toggleDeviceService = async (deviceId, action, userId) => {
       deviceId: { _id: device._id, name: device.name }
     };
     io.emit("action_update", populatedAction);
+    io.emit("device_update", {
+      id: device.id,
+      _id: device._id,
+      status: "pending",
+      pendingAction: action,
+      loading: true
+    });
   }
 
   const controlPayload = {};
@@ -86,6 +115,16 @@ const toggleDeviceService = async (deviceId, action, userId) => {
             deviceId: { _id: device._id, name: device.name }
           };
           io.emit("action_update", populatedFailedAction);
+
+          const lastSuccess = await Action.findOne({ deviceId: device._id, status: { $in: ["success"] } }).sort({ time: -1 });
+          const prevStatus = (lastSuccess && lastSuccess.action === "turn_on") ? "on" : "off";
+          io.emit("device_update", {
+            id: device.id,
+            _id: device._id,
+            status: prevStatus,
+            loading: false,
+            error: `Không nhận được phản hồi từ ${device.name || 'thiết bị'}`
+          });
         }
       }
     } catch (error) {

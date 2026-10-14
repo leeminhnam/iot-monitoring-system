@@ -165,17 +165,47 @@ const Dashboard = () => {
       const currentDevices = devicesRef.current;
       const device = currentDevices.find(d => d._id === data._id);
 
-      if (device?.loading) {
+      if (data.status === 'pending') {
+        setDevices(prev => prev.map(d =>
+          d._id === data._id ? {
+            ...d,
+            status: 'pending',
+            loading: true,
+            pendingAction: data.pendingAction
+          } : d
+        ));
+        return;
+      }
+
+      if (data.error) {
+        message.error(data.error);
+        setDevices(prev => prev.map(d =>
+          d._id === data._id ? {
+            ...d,
+            status: data.status,
+            loading: false,
+            pendingAction: null
+          } : d
+        ));
+        return;
+      }
+
+      if (device?.loading || device?.status === 'pending') {
         const deviceName = device.name || 'thiết bị';
         if (data.status === 'on') {
           message.success(`Bật ${deviceName} thành công`);
-        } else {
+        } else if (data.status === 'off') {
           message.success(`Tắt ${deviceName} thành công`);
         }
       }
 
       setDevices(prev => prev.map(d =>
-        d._id === data._id ? { ...d, status: data.status, loading: false } : d
+        d._id === data._id ? {
+          ...d,
+          status: data.status,
+          loading: false,
+          pendingAction: null
+        } : d
       ));
     });
 
@@ -191,27 +221,25 @@ const Dashboard = () => {
   }, []);
 
   const toggleDevice = async (deviceId, checked) => {
-    setDevices(prev => prev.map(d => d._id === deviceId ? { ...d, loading: true } : d));
-
     const action = checked ? "turn_on" : "turn_off";
+    setDevices(prev => prev.map(d => d._id === deviceId ? {
+      ...d,
+      loading: true,
+      status: 'pending',
+      pendingAction: action
+    } : d));
 
     try {
       await deviceApi.toggleDevice(deviceId, action);
-
-      setTimeout(() => {
-        const currentDevices = devicesRef.current;
-        const targetDevice = currentDevices.find(d => d._id === deviceId);
-
-        if (targetDevice && targetDevice.loading) {
-          const deviceName = targetDevice.name || 'Thiết bị';
-          message.error(`Không nhận được phản hồi từ ${deviceName}`);
-          setDevices(prev => prev.map(d => d._id === deviceId ? { ...d, loading: false } : d));
-        }
-      }, 5000);
     } catch (err) {
       console.error("Lỗi khi điều khiển thiết bị:", err);
       message.error("Điều khiển thiết bị thất bại");
-      setDevices(prev => prev.map(d => d._id === deviceId ? { ...d, loading: false } : d));
+      setDevices(prev => prev.map(d => d._id === deviceId ? {
+        ...d,
+        loading: false,
+        status: d.previousStatus || (action === "turn_on" ? "off" : "on"),
+        pendingAction: null
+      } : d));
     }
   };
 
@@ -323,27 +351,38 @@ const Dashboard = () => {
                   </div>
                 ))
               ) : (
-                devices.map((device, index) => (
-                  <div className="device-item" key={device._id}>
-                    <div className="device-info">
-                      <Text style={{ color: '#fff', fontSize: '15px' }}>
-                        {device.name || `Đèn ${index + 1}`}
-                        {device.status === 'on' && (
-                          <BulbFilled style={{ color: '#ffd700', marginLeft: 8, fontSize: '14px' }} />
+                devices.map((device, index) => {
+                  const isPending = device.status === 'pending' || device.loading;
+                  const isChecked = device.status === 'on' || (isPending && device.pendingAction === 'turn_on') || (isPending && !device.pendingAction && device.previousStatus === 'on');
+
+                  return (
+                    <div className="device-item" key={device._id}>
+                      <div className="device-info">
+                        <Text style={{ color: '#fff', fontSize: '15px' }}>
+                          {device.name || `Đèn ${index + 1}`}
+                          {isChecked && (
+                            <BulbFilled style={{ color: '#ffd700', marginLeft: 8, fontSize: '14px' }} />
+                          )}
+                        </Text>
+                        {isPending ? (
+                          <Text style={{ color: '#f59e0b', fontSize: '12px', display: 'block' }}>
+                            Đang thực hiện...
+                          </Text>
+                        ) : (
+                          <Text style={{ color: '#8c8c8c', fontSize: '12px', display: 'block' }}>
+                            {device.status === 'on' ? 'Đang bật' : 'Đang tắt'}
+                          </Text>
                         )}
-                      </Text>
-                      <Text style={{ color: '#8c8c8c', fontSize: '12px', display: 'block' }}>
-                        {device.status === 'on' ? 'Đang bật' : 'Đang tắt'}
-                      </Text>
+                      </div>
+                      <Switch
+                        checked={isChecked}
+                        onChange={(checked) => toggleDevice(device._id, checked)}
+                        loading={isPending}
+                        className={isChecked ? 'switch-on' : ''}
+                      />
                     </div>
-                    <Switch
-                      checked={device.status === 'on'}
-                      onChange={(checked) => toggleDevice(device._id, checked)}
-                      loading={device.loading}
-                      className={device.status === 'on' ? 'switch-on' : ''}
-                    />
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
           </Card>

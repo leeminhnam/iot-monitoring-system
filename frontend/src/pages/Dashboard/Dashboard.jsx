@@ -10,6 +10,28 @@ import './Dashboard.css';
 
 const { Title, Text } = Typography;
 
+const RainIcon = (props) => (
+  <svg
+    viewBox="0 0 24 24"
+    width="1em"
+    height="1em"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25" />
+    <line x1="8" y1="19" x2="8" y2="21" />
+    <line x1="8" y1="13" x2="8" y2="15" />
+    <line x1="16" y1="19" x2="16" y2="21" />
+    <line x1="16" y1="13" x2="16" y2="15" />
+    <line x1="12" y1="21" x2="12" y2="23" />
+    <line x1="12" y1="15" x2="12" y2="17" />
+  </svg>
+);
+
 const getTemperatureStatus = (value) => {
   if (value <= 0) return { label: 'Rất lạnh', color: '#00bcd4' };
   if (value <= 15) return { label: 'Lạnh', color: '#29b6f6' };
@@ -34,12 +56,20 @@ const getLightStatus = (value) => {
   return { label: 'Rất sáng', color: '#ffeb3b' };
 };
 
+const getRainStatus = (value) => {
+  if (value <= 0) return { label: 'Tạnh ráo', color: '#66bb6a' };
+  if (value <= 30) return { label: 'Mưa nhỏ', color: '#29b6f6' };
+  if (value <= 70) return { label: 'Mưa vừa', color: '#3b82f6' };
+  return { label: 'Mưa to', color: '#f44336' };
+};
+
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [currentData, setCurrentData] = useState({
     temperature: 0,
     humidity: 0,
-    light: 0
+    light: 0,
+    rain: 0
   });
 
   const [chartData, setChartData] = useState([]);
@@ -52,16 +82,27 @@ const Dashboard = () => {
 
   useEffect(() => {
     const TIMEOUT_SENSOR_MS = 10000;
+    const SENSOR_ERROR_KEY = 'sensor_connection_status';
     let sensorWatchdog = null;
+
+    const handleSensorConnectionLoss = () => {
+      if (sensorWatchdog) clearTimeout(sensorWatchdog);
+      setCurrentData({
+        temperature: 0,
+        humidity: 0,
+        light: 0,
+        rain: 0
+      });
+      message.error({
+        content: 'Mất kết nối dữ liệu cảm biến!',
+        key: SENSOR_ERROR_KEY
+      });
+    };
 
     const resetSensorWatchdog = () => {
       if (sensorWatchdog) clearTimeout(sensorWatchdog);
       sensorWatchdog = setTimeout(() => {
-        setCurrentData({
-          temperature: 0,
-          humidity: 0,
-          light: 0
-        });
+        handleSensorConnectionLoss();
       }, TIMEOUT_SENSOR_MS);
     };
 
@@ -88,7 +129,7 @@ const Dashboard = () => {
         try {
           const res = await sensorApi.getLatestSensorData();
           const arr = res.data;
-          const parsed = { temperature: 0, humidity: 0, light: 0 };
+          const parsed = { temperature: 0, humidity: 0, light: 0, rain: 0 };
           const now = Date.now();
           let hasRecentData = false;
 
@@ -101,6 +142,7 @@ const Dashboard = () => {
               if (item.sensorType === 'temperature') parsed.temperature = item.value;
               else if (item.sensorType === 'humidity') parsed.humidity = item.value;
               else if (item.sensorType === 'light') parsed.light = item.value;
+              else if (item.sensorType === 'rain') parsed.rain = item.value;
             }
           });
 
@@ -108,6 +150,8 @@ const Dashboard = () => {
 
           if (hasRecentData) {
             resetSensorWatchdog();
+          } else {
+            handleSensorConnectionLoss();
           }
         } catch (err) {
           console.error("Lỗi khi lấy dữ liệu cảm biến mới nhất:", err);
@@ -123,28 +167,20 @@ const Dashboard = () => {
     const socket = io('http://localhost:3001');
 
     socket.on('connect_error', () => {
-      if (sensorWatchdog) clearTimeout(sensorWatchdog);
-      setCurrentData({
-        temperature: 0,
-        humidity: 0,
-        light: 0
-      });
+      handleSensorConnectionLoss();
     });
 
     socket.on('disconnect', () => {
-      if (sensorWatchdog) clearTimeout(sensorWatchdog);
-      setCurrentData({
-        temperature: 0,
-        humidity: 0,
-        light: 0
-      });
+      handleSensorConnectionLoss();
     });
 
     socket.on('sensor_update', (data) => {
+      message.destroy(SENSOR_ERROR_KEY);
       setCurrentData({
         temperature: data.temperature || 0,
         humidity: data.humidity || 0,
-        light: data.light || 0
+        light: data.light || 0,
+        rain: data.rain !== undefined ? data.rain : 0
       });
 
       resetSensorWatchdog();
@@ -154,7 +190,8 @@ const Dashboard = () => {
           time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', hour12: false }),
           temperature: data.temperature,
           humidity: data.humidity,
-          light: data.light
+          light: data.light,
+          rain: data.rain
         }];
         if (newData.length > 50) return newData.slice(newData.length - 50);
         return newData;
@@ -211,6 +248,7 @@ const Dashboard = () => {
 
     return () => {
       if (sensorWatchdog) clearTimeout(sensorWatchdog);
+      message.destroy(SENSOR_ERROR_KEY);
       socket.off('connect');
       socket.off('connect_error');
       socket.off('disconnect');
@@ -253,8 +291,8 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
-      <Row gutter={16} className="stats-row">
-        <Col span={8}>
+      <Row gutter={12} className="stats-row">
+        <Col span={6}>
           <Card className="stat-card" bordered={false}>
             <div className="stat-title">
               <Text style={{ color: '#8c8c8c' }}>Nhiệt độ</Text>
@@ -271,7 +309,7 @@ const Dashboard = () => {
           </Card>
         </Col>
 
-        <Col span={8}>
+        <Col span={6}>
           <Card className="stat-card" bordered={false}>
             <div className="stat-title">
               <Text style={{ color: '#8c8c8c' }}>Độ ẩm</Text>
@@ -288,7 +326,7 @@ const Dashboard = () => {
           </Card>
         </Col>
 
-        <Col span={8}>
+        <Col span={6}>
           <Card className="stat-card" bordered={false}>
             <div className="stat-title">
               <Text style={{ color: '#8c8c8c' }}>Ánh sáng</Text>
@@ -304,33 +342,81 @@ const Dashboard = () => {
             </div>
           </Card>
         </Col>
-      </Row>
 
-      <Row gutter={16} className="main-content-row">
-        <Col span={16}>
+        <Col span={6}>
           <Card
-            className="chart-card"
+            className={`stat-card ${Number(currentData.rain) > 70 ? 'alert-blink' : ''}`}
             bordered={false}
-            title={<Text style={{ color: '#fff', fontSize: '16px' }}>Đồ thị cảm biến (Thời gian thực)</Text>}
           >
-            <div style={{ width: '100%', height: 250 }}>
-              <ResponsiveContainer>
-                <LineChart data={chartData} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#2c2e3e" vertical={false} />
-                  <XAxis dataKey="time" stroke="#8c8c8c" tick={{ fill: '#8c8c8c', fontSize: 12 }} />
-                  <YAxis stroke="#8c8c8c" tick={{ fill: '#8c8c8c', fontSize: 12 }} />
-                  <Tooltip
-                    contentStyle={{ backgroundColor: '#1e2130', border: 'none', color: '#fff' }}
-                    itemStyle={{ color: '#fff' }}
-                  />
-                  <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
-                  <Line type="monotone" name="Nhiệt độ (°C)" dataKey="temperature" stroke="#ff9f43" strokeWidth={2} dot={false} />
-                  <Line type="monotone" name="Độ ẩm (%)" dataKey="humidity" stroke="#00e5ff" strokeWidth={2} dot={false} />
-                  <Line type="monotone" name="Ánh sáng (lx)" dataKey="light" stroke="#ffd700" strokeWidth={2} dot={false} />
-                </LineChart>
-              </ResponsiveContainer>
+            <div className="stat-title">
+              <Text style={{ color: '#8c8c8c' }}>Độ mưa</Text>
+              <RainIcon className="icon-rain" />
+            </div>
+            <div className="stat-value">
+              <span className="value rain">{currentData.rain}</span>
+              <span className="unit">%</span>
+            </div>
+            <div className="stat-footer">
+              <div className="indicator" style={{ backgroundColor: getRainStatus(currentData.rain).color }}></div>
+              <Text style={{ color: '#8c8c8c', marginLeft: 8 }}>{getRainStatus(currentData.rain).label}</Text>
             </div>
           </Card>
+        </Col>
+      </Row>
+
+      <Row gutter={12} className="main-content-row">
+        <Col span={16}>
+          <Row gutter={12} style={{ height: '100%' }}>
+            <Col span={12} style={{ height: '100%' }}>
+              <Card
+                className="chart-card"
+                bordered={false}
+                title={<Text style={{ color: '#fff', fontSize: '15px' }}>Đồ thị 3 cảm biến</Text>}
+              >
+                <div style={{ width: '100%', height: 230 }}>
+                  <ResponsiveContainer>
+                    <LineChart data={chartData} margin={{ top: 5, right: 10, left: -25, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#2c2e3e" vertical={false} />
+                      <XAxis dataKey="time" stroke="#8c8c8c" tick={{ fill: '#8c8c8c', fontSize: 11 }} />
+                      <YAxis stroke="#8c8c8c" tick={{ fill: '#8c8c8c', fontSize: 11 }} />
+                      <Tooltip
+                        contentStyle={{ backgroundColor: '#1e2130', border: 'none', color: '#fff' }}
+                        itemStyle={{ color: '#fff' }}
+                      />
+                      <Legend iconType="circle" wrapperStyle={{ paddingTop: '10px', fontSize: '12px' }} />
+                      <Line type="monotone" name="Nhiệt độ (°C)" dataKey="temperature" stroke="#ff9f43" strokeWidth={2} dot={false} />
+                      <Line type="monotone" name="Độ ẩm (%)" dataKey="humidity" stroke="#00e5ff" strokeWidth={2} dot={false} />
+                      <Line type="monotone" name="Ánh sáng (lx)" dataKey="light" stroke="#ffd700" strokeWidth={2} dot={false} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </Card>
+            </Col>
+
+            <Col span={12} style={{ height: '100%' }}>
+              <Card
+                className="chart-card"
+                bordered={false}
+                title={<Text style={{ color: '#fff', fontSize: '15px' }}>Đồ thị độ mưa</Text>}
+              >
+                <div style={{ width: '100%', height: 230 }}>
+                  <ResponsiveContainer>
+                    <LineChart data={chartData} margin={{ top: 5, right: 10, left: -25, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#2c2e3e" vertical={false} />
+                      <XAxis dataKey="time" stroke="#8c8c8c" tick={{ fill: '#8c8c8c', fontSize: 11 }} />
+                      <YAxis domain={[0, 100]} stroke="#8c8c8c" tick={{ fill: '#8c8c8c', fontSize: 11 }} />
+                      <Tooltip
+                        contentStyle={{ backgroundColor: '#1e2130', border: 'none', color: '#fff' }}
+                        itemStyle={{ color: '#fff' }}
+                      />
+                      <Legend iconType="circle" wrapperStyle={{ paddingTop: '10px', fontSize: '12px' }} />
+                      <Line type="monotone" name="Độ mưa (%)" dataKey="rain" stroke="#3b82f6" strokeWidth={2} dot={false} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </Card>
+            </Col>
+          </Row>
         </Col>
 
         <Col span={8}>
@@ -369,7 +455,7 @@ const Dashboard = () => {
                             Đang thực hiện...
                           </Text>
                         ) : (
-                          <Text style={{ color: '#8c8c8c', fontSize: '12px', display: 'block' }}>
+                          <Text style={{ color: device.status === 'on' ? '#10b981' : '#8c8c8c', fontSize: '12px', display: 'block' }}>
                             {device.status === 'on' ? 'Đang bật' : 'Đang tắt'}
                           </Text>
                         )}

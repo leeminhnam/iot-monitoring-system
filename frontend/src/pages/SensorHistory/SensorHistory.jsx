@@ -87,6 +87,7 @@ export default function SensorHistory() {
     if (type === 'temperature') return `${value} °C`;
     if (type === 'humidity') return `${value} %`;
     if (type === 'light') return `${value} lux`;
+    if (type === 'rain') return `${value} %`;
     return value;
   };
 
@@ -94,6 +95,7 @@ export default function SensorHistory() {
     if (type === 'temperature') return 'Nhiệt độ';
     if (type === 'humidity') return 'Độ ẩm';
     if (type === 'light') return 'Ánh sáng';
+    if (type === 'rain') return 'Độ mưa';
     return type;
   };
 
@@ -101,6 +103,7 @@ export default function SensorHistory() {
     if (type === 'temperature') return 'nhiet-do';
     if (type === 'humidity') return 'do-am';
     if (type === 'light') return 'anh-sang';
+    if (type === 'rain') return 'do-mua';
     return '';
   };
 
@@ -178,7 +181,8 @@ export default function SensorHistory() {
           options={[
             { value: 'temperature', label: 'Nhiệt độ' },
             { value: 'humidity', label: 'Độ ẩm' },
-            { value: 'light', label: 'Ánh sáng' }
+            { value: 'light', label: 'Ánh sáng' },
+            { value: 'rain', label: 'Độ mưa' }
           ]}
         />
 

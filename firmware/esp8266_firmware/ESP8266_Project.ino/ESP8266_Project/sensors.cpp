@@ -40,6 +40,9 @@ void readSensors() {
   // Đọc cường độ ánh sáng thực tế theo đơn vị Lux (0 - 65535 lx)
   float lux = lightMeter.readLightLevel();
 
+  // Độ mưa giả lập ngẫu nhiên 0 - 100%
+  int rain = random(0, 101);
+
   if (isnan(temperature) || isnan(humidity)) {
     Serial.println("DHT11 read failed");
     return;
@@ -54,6 +57,9 @@ void readSensors() {
 
   data += ",\"light\":";
   data += String(lux, 1); // Trả về số thực Lux
+
+  data += ",\"rain\":";
+  data += String(rain);
   data += "}";
 
   Serial.print("Sensor data: ");

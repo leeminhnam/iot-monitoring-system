@@ -50,7 +50,8 @@ const resetDatabase = async () => {
 
     const sensors = [
       { id: 'DHT11', name: 'DHT11' },
-      { id: 'BH1750', name: 'BH1750' }
+      { id: 'BH1750', name: 'BH1750' },
+      { id: 'RainSensor', name: 'Rain Sensor' }
     ];
     console.log('Đang thêm các cảm biến...');
     await Sensor.insertMany(sensors);

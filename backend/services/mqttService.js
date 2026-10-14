@@ -15,7 +15,8 @@ let sensorCache = {};
 const SENSOR_TYPE_MAP = {
   temperature: "DHT11",
   humidity: "DHT11",
-  light: "BH1750"
+  light: "BH1750",
+  rain: "Rain Sensor"
 };
 
 const initMqtt = async () => {
@@ -25,6 +26,20 @@ const initMqtt = async () => {
   }
   for (let sensor of sensors) {
     sensorCache[sensor.name] = sensor._id;
+  }
+
+  // Tự động đảm bảo Rain Sensor tồn tại nếu chưa có trong DB
+  if (!sensorCache["Rain Sensor"]) {
+    try {
+      const rainSensor = await Sensor.findOneAndUpdate(
+        { name: "Rain Sensor" },
+        { id: "RainSensor", name: "Rain Sensor" },
+        { upsert: true, new: true }
+      );
+      sensorCache["Rain Sensor"] = rainSensor._id;
+    } catch (e) {
+      console.error("Không thể tự động khởi tạo Rain Sensor:", e.message);
+    }
   }
 
   const devices = await Device.find();
@@ -55,7 +70,8 @@ const initMqtt = async () => {
         const records = [
           { value: data.temperature, type: "temperature" },
           { value: data.humidity, type: "humidity" },
-          { value: data.light, type: "light" }
+          { value: data.light, type: "light" },
+          { value: data.rain, type: "rain" }
         ].filter(r => r.value !== undefined);
 
         const newRecords = await Promise.all(records.map(async (r, i) => {
@@ -74,6 +90,7 @@ const initMqtt = async () => {
             temperature: data.temperature,
             humidity: data.humidity,
             light: data.light,
+            rain: data.rain,
             time: currentTime
           });
           io.emit("sensor_data_new", newRecords);

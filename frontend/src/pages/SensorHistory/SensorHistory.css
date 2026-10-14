@@ -134,7 +134,8 @@
 /* Colors for Sensor Types and Values */
 .type-nhiet-do, .value-nhiet-do,
 .type-do-am, .value-do-am,
-.type-anh-sang, .value-anh-sang {
+.type-anh-sang, .value-anh-sang,
+.type-do-mua, .value-do-mua {
   color: #ffa500; /* Orange color based on image */
   font-weight: 500;
 }

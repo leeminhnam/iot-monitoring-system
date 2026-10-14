@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Select, Table, Input, message } from 'antd';
+import { Select, Table, Input, message, Typography } from 'antd';
 import { io } from 'socket.io-client';
 import sensorApi from '../../services/sensorApi';
 import './SensorHistory.css';
+
+const { Text } = Typography;
 
 export default function SensorHistory() {
   const [data, setData] = useState([]);
@@ -106,7 +108,7 @@ export default function SensorHistory() {
     if (!dateString) return '';
     const date = new Date(dateString);
     const pad = (n) => n.toString().padStart(2, '0');
-    return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+    return `${date.getFullYear()}/${pad(date.getMonth() + 1)}/${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
   };
 
   const columns = [
@@ -143,7 +145,21 @@ export default function SensorHistory() {
       title: 'Thời gian',
       dataIndex: 'time',
       key: 'time',
-      render: (time) => formatDate(time),
+      render: (time) => {
+        const formatted = formatDate(time);
+        if (!formatted) return '';
+        return (
+          <Text
+            copyable={{
+              text: formatted,
+              tooltips: ['Sao chép', 'Đã sao chép!'],
+            }}
+            style={{ color: 'inherit' }}
+          >
+            {formatted}
+          </Text>
+        );
+      },
     },
   ];
 

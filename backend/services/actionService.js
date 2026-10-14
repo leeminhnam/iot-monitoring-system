@@ -9,7 +9,7 @@ const getActionHistoryService = async ({ time, deviceName, status, action }, pag
       $regexMatch: {
         input: {
           $dateToString: {
-            format: "%d/%m/%Y %H:%M:%S",
+            format: "%Y/%m/%d %H:%M:%S",
             date: "$time",
             timezone: "Asia/Ho_Chi_Minh"
           }

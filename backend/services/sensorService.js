@@ -9,7 +9,7 @@ const getSensorDataService = async ({ time, sensorType, value }, page = 1, limit
       $regexMatch: {
         input: {
           $dateToString: {
-            format: "%d/%m/%Y %H:%M:%S",
+            format: "%Y/%m/%d %H:%M:%S",
             date: "$time",
             timezone: "Asia/Ho_Chi_Minh"
           }
@@ -64,19 +64,20 @@ const getSensorDataService = async ({ time, sensorType, value }, page = 1, limit
 };
 
 const getLatestSensorDataService = async () => {
-  const [temperature, humidity, light] = await Promise.all([
+  const [temperature, humidity, light, rain] = await Promise.all([
     SensorData.findOne({ sensorType: 'temperature' }).sort({ time: -1 }),
     SensorData.findOne({ sensorType: 'humidity' }).sort({ time: -1 }),
-    SensorData.findOne({ sensorType: 'light' }).sort({ time: -1 })
+    SensorData.findOne({ sensorType: 'light' }).sort({ time: -1 }),
+    SensorData.findOne({ sensorType: 'rain' }).sort({ time: -1 })
   ]);
 
-  return [temperature, humidity, light].filter(item => item !== null);
+  return [temperature, humidity, light, rain].filter(item => item !== null);
 };
 
 const getChartDataService = async (limit = 50) => {
   const rawData = await SensorData.find()
     .sort({ time: -1 })
-    .limit(limit * 3)
+    .limit(limit * 4)
     .exec();
 
   const grouped = {};
@@ -86,11 +87,12 @@ const getChartDataService = async (limit = 50) => {
     const displayTime = vnTime.toISOString().substring(11, 16);
 
     if (!grouped[timeKey]) {
-      grouped[timeKey] = { time: displayTime, temperature: null, humidity: null, light: null, timestamp: timeKey };
+      grouped[timeKey] = { time: displayTime, temperature: null, humidity: null, light: null, rain: null, timestamp: timeKey };
     }
     if (item.sensorType === "temperature") grouped[timeKey].temperature = item.value;
     else if (item.sensorType === "humidity") grouped[timeKey].humidity = item.value;
     else if (item.sensorType === "light") grouped[timeKey].light = item.value;
+    else if (item.sensorType === "rain") grouped[timeKey].rain = item.value;
   });
 
   const result = Object.values(grouped)

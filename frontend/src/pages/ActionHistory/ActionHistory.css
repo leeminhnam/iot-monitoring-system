@@ -137,6 +137,28 @@
   color: #8b92b2 !important;
 }
 
+/* Typography copyable customization */
+.custom-ant-table .ant-typography {
+  color: #fff !important;
+  display: inline-flex;
+  align-items: center;
+}
+
+.custom-ant-table .ant-typography-copy {
+  color: #8b92b2 !important;
+  margin-left: 8px !important;
+  transition: all 0.2s ease;
+}
+
+.custom-ant-table .ant-typography-copy:hover {
+  color: #ffffff !important;
+}
+
+.custom-ant-table .ant-typography-copy-success,
+.custom-ant-table .ant-typography-copy-success:hover {
+  color: #10b981 !important;
+}
+
 .pagination-container {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
